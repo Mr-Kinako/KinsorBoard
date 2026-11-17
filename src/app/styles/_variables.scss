@@ -1,0 +1,35 @@
+// src/app/styles/_variables.scss
+
+// Фон и поверхности (спокойный графитовый / глубокий серо-синий)
+$bg-canvas: #131318;
+$bg-panel: #1b1b22;
+$bg-panel-hover: #24242e;
+$bg-input: #16161c;
+
+// Границы и сетка
+$border-subtle: #2a2a35;
+$border-active: #4c4669;
+$grid-line-minor: rgba(255, 255, 255, 0.03);
+$grid-line-major: rgba(255, 255, 255, 0.07);
+$grid-cross: rgba(168, 162, 208, 0.25);
+
+// Текст
+$text-primary: #e2e2ea;
+$text-secondary: #8e8e9e;
+$text-muted: #5c5c6b;
+
+// Приглушённые лавандово-фиолетовые акценты
+$accent-primary: #6d619c;
+$accent-primary-hover: #7d70b0;
+$accent-subtle: rgba(109, 97, 156, 0.16);
+
+// Статусы
+$status-ready: #4e9a76;
+
+// Геометрия UI
+$radius-sm: 6px;
+$radius-md: 10px;
+$topbar-height: 48px;
+$toolbar-width: 48px;
+$z-ui: 10;
+$z-canvas: 1;
