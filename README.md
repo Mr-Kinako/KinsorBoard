@@ -1,5 +1,3 @@
-<!-- README.md -->
-
 # Kinsorboard
 
 **Version:** `0.1.0-alpha`
@@ -8,7 +6,7 @@
   <summary>
     Примечание о версионировании
   </summary>
-  
+
   Номер сборки (build metadata) отброшен, чтобы не менять миллион раз. В целом достаточно и текущего варианта для README.
 </details>
 <br>
@@ -24,16 +22,17 @@
 Создать производительную рабочую доску без лишнего оверхеда с заделом на кроссплатформенность (Web -> Electron / Desktop / Mobile) и будущий мультиплеер.
 
 ### Ключевые фичи MVP:
-- **Гибридный рендеринг:** UI-оболочка на React, сам холст на нативном HTML5 Canvas (2D API) для стабильных 60 FPS.
+- **Гибридный рендеринг:** UI-оболочка на React, холст на нативном HTML5 Canvas (`CanvasRenderingContext2D`) с изолированным движком на чистом TypeScript.
 - **Чанковая система координат:** Вместо хаотичной бесконечности холст разбивается на дискретные сетки-чанки. Статичные шаблоны на старте:
   - `100 Chunks` (~1K × 1K)
   - `200 Chunks` (~2K × 2K)
   - `400 Chunks` (~4K × 4K)
-- **Базовый инструментарий (Left Toolbar):** Select, Rectangle, Circle/Ellipse, Line, Pen (Freehand), Text, Image, Selection Area, Eraser, а также палитра и настройки сетки.
-- **Навигация и HUD:**
-  - *Topbar:* Логотип, редактируемое название доски, Undo/Redo, Save (локальное сохранение), Export, Settings.
-  - *Right Panels:* Переключатель размера холста (Canvas Size) и миникарта (Navigator) с быстрым зумом и центрированием.
-  - *Bottom Bar:* Индикатор статуса (`Ready`), управление масштабом (`- 100% +`) и счетчик слоев/объектов.
+- **Базовый инструментарий (Left Toolbar):** Select (выделение, перетаскивание, удаление по `Delete`/`Backspace`), Rectangle, Ellipse, Line, Pen (Freehand), Text, Eraser и горячие клавиши (`V`, `R`, `O`, `L`, `P`, `T`, `E`).
+- **Навигация и управление камерой:**
+  - Зум к курсору колесом мыши (`10% – 500%`) и панорамирование (`СКМ` или `Space + ЛКМ`).
+  - *Topbar:* Бренд, редактируемое название доски, заготовки под Undo/Redo, Save, Export и Settings.
+  - *Right Panels (в планах):* Переключатель размера холста (`Canvas Size`: 100 / 200 / 400 чанков) и миникарта (`Navigator`).
+  - *Bottom Bar (в планах):* Статус, управление масштабом и счётчик объектов.
 - **Визуальный стиль:** Тёмная тема (Dark Mode) со спокойными, приглушёнными фиолетово-лавандовыми акцентами (референс лежит в `public/ref.png`).
 
 ---
@@ -41,12 +40,12 @@
 ## 🛠 Технологический стек
 
 ### Frontend (Текущий этап)
-- **Core:** React + TypeScript (`strict: true`, запрет на `any`)
-- **Build Tool:** Vite
-- **Styling:** SCSS (модули / переменные для приглушённой палитры)
-- **Routing:** `react-router` (с учетом будущей совместимости с локальными путями Electron)
-- **Canvas Engine:** Чистый TypeScript-класс, изолированный от жизненного цикла React
-- **Code Quality:** ESLint + Prettier + EditorConfig
+- **Core:** React 19 + TypeScript (`strict: true`, запрет на `any`)
+- **Build Tool:** Vite (с автоматической инъекцией SCSS-переменных)
+- **Styling:** SCSS Modules + дизайн-токены в `shared/styles/_variables.scss`
+- **Routing:** `react-router` (с учётом будущей совместимости с Electron)
+- **Canvas Engine:** Декомпозированный доменный движок (`BoardEngine`, `ViewportCamera`, `BoardRenderer`, `geometry`, `tools`), изолированный от жизненного цикла React
+- **Code Quality & Architecture:** ESLint + Prettier + EditorConfig + **Steiger** (контроль границ FSD)
 
 ### Future Scope (Масштабирование)
 - **Desktop / Mobile:** Портирование через Electron (Windows / Linux) и адаптация под Android.
@@ -56,31 +55,26 @@
 
 ## 🏗 Архитектура проекта
 
-Проект развивается по принципам **Feature-Sliced Design (FSD)** с жёстким разделением UI и логики отрисовки:
+Проект строится по **Feature-Sliced Design (FSD)** с автоматической проверкой границ слоёв через `steiger`:
 
-- `src/app/` — инициализация приложения, провайдеры, роутинг, глобальные стили и лейауты.
-- `src/pages/` — страницы приложения (Дашборд выбора шаблона, Рабочая доска).
-- `src/widgets/` — крупные самостоятельные блоки интерфейса (`Topbar`, `Toolbar`, `CanvasSizePanel`, `Navigator`, `StatusBar`).
-- `src/features/` — пользовательские сценарии (рисование пером, перетаскивание объектов, зум и панорамирование, экспорт).
-- `src/entities/` — бизнес-сущности (модели объектов доски: стикеры, фигуры, линии; модель чанка).
-- `src/shared/` — переиспользуемый код:
-  - `shared/lib/canvas/` — низкоуровневый движок HTML5 Canvas, математика координат и рендер чанков.
-  - `shared/ui/` — базовые UI-кит компоненты (кнопки, иконки, переключатели).
-- `docs/` — архитектурные решения (`ADR`) и спецификации (`SPEC`).
-- `CLEAR_ROOMS/` — рабочие пространства для изолированной проработки задач и фиксации результатов.
+- `src/app/` — инициализация приложения, роутинг, глобальные стили (`global.scss`) и лейауты (`AppLayout`).
+- `src/pages/` — страницы приложения (`pages/board`).
+- `src/widgets/` — самостоятельные композиционные блоки UI (`topbar`, `toolbar`).
+- `src/entities/` — бизнес-сущности и доменная логика (`entities/board`: движок холста, камера, рендерер, геометрия, модели объектов и инструментов).
+- `src/shared/` — базовые переиспользуемые ресурсы (`shared/styles/_variables.scss`, утилиты и UI-компоненты).
+
+Подробное дерево директорий и назначение файлов вынесено в [`PROJECT_STRUCTURE.md`](./PROJECT_STRUCTURE.md).
 
 ---
 
 ## 📝 Правила разработки и Git
 
-1. **Версионирование:** Строгий SemVer (`MAJOR.MINOR.PATCH-PRERELEASE`). Текущая ветка разработки — `0.1.0-alpha.0`.
-2. **Коммиты:** Только по стандарту **Conventional Commits** на английском языке в повелительном наклонении:
-   - `feat(scope): add new feature`
-   - `fix(scope): resolve specific bug`
-   - `chore(scope): update configs or dependencies`
-   - `docs(scope): update documentation`
-   - `refactor(scope): restructure code without changing behavior`
-3. **Чистота кода:** Никаких магических чисел в логике Canvas (все размеры чанков и отступы выносятся в константы), строгая типизация событий мыши и координат.
+Все соглашения по архитектуре, FSD-импортам, целевым реэкспортам, SemVer и формату коммитов зафиксированы в [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+
+Краткая сводка:
+1. **Версионирование:** SemVer (`MAJOR.MINOR.PATCH-PRERELEASE`, текущая ветка разработки — `0.1.0-alpha.x`).
+2. **Коммиты:** Строго по стандарту **Conventional Commits** на английском языке в повелительном наклонении (`feat`, `fix`, `refactor`, `docs`, `style`, `chore`).
+3. **Проверки перед коммитом:** Обязательный прогон `npm run checks` (`prettier`, `steiger`, `eslint`).
 
 ## Ориентировочный пример UI
 
