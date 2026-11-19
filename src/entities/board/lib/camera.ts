@@ -9,6 +9,7 @@ export class ViewportCamera {
   private readonly minScale = 0.1;
   private readonly maxScale = 5;
   private readonly zoomFactor = 1.1;
+  private readonly stepFactor = 1.25;
 
   public screenToWorld(clientX: number, clientY: number, rect: DOMRect): Point {
     return {
@@ -23,20 +24,43 @@ export class ViewportCamera {
     clientY: number,
     rect: DOMRect,
   ): void {
-    const oldScale = this.scale;
-    const nextScale =
-      deltaY < 0 ? this.scale * this.zoomFactor : this.scale / this.zoomFactor;
+    const factor = deltaY < 0 ? this.zoomFactor : 1 / this.zoomFactor;
+    this.zoomByFactorAt(factor, clientX - rect.left, clientY - rect.top);
+  }
 
-    this.scale = Math.max(this.minScale, Math.min(this.maxScale, nextScale));
+  public zoomByStep(direction: "in" | "out", center: Point): void {
+    const factor = direction === "in" ? this.stepFactor : 1 / this.stepFactor;
+    this.zoomByFactorAt(factor, center.x, center.y);
+  }
 
-    const mouseX = clientX - rect.left;
-    const mouseY = clientY - rect.top;
+  public centerOnWorld(
+    worldPoint: Point,
+    viewportWidth: number,
+    viewportHeight: number,
+  ): void {
+    this.pan.x = viewportWidth / 2 - worldPoint.x * this.scale;
+    this.pan.y = viewportHeight / 2 - worldPoint.y * this.scale;
+  }
 
-    this.pan.x = mouseX - (mouseX - this.pan.x) * (this.scale / oldScale);
-    this.pan.y = mouseY - (mouseY - this.pan.y) * (this.scale / oldScale);
+  public resetView(): void {
+    this.scale = 1;
+    this.pan = { x: 0, y: 0 };
   }
 
   public getScalePercent(): number {
     return Math.round(this.scale * 100);
+  }
+
+  private zoomByFactorAt(
+    factor: number,
+    originX: number,
+    originY: number,
+  ): void {
+    const oldScale = this.scale;
+    const nextScale = this.scale * factor;
+    this.scale = Math.max(this.minScale, Math.min(this.maxScale, nextScale));
+
+    this.pan.x = originX - (originX - this.pan.x) * (this.scale / oldScale);
+    this.pan.y = originY - (originY - this.pan.y) * (this.scale / oldScale);
   }
 }

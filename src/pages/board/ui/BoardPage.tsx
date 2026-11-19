@@ -9,6 +9,7 @@ import {
 import { Topbar } from "@/widgets/topbar";
 import { Toolbar } from "@/widgets/toolbar";
 import { CanvasSizePanel } from "@/widgets/canvas-size";
+import { Navigator } from "@/widgets/navigator";
 import styles from "./BoardPage.module.scss";
 
 const SHORTCUT_MAP: Record<string, CanvasTool> = {
@@ -25,6 +26,9 @@ export const BoardPage: React.FC = () => {
   const [zoomPercent, setZoomPercent] = useState<number>(100);
   const [activeTool, setActiveTool] = useState<CanvasTool>("select");
   const [totalChunks, setTotalChunks] = useState<ChunkPreset>(200);
+  const [engineInstance, setEngineInstance] = useState<BoardEngine | null>(
+    null,
+  );
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<BoardEngine | null>(null);
 
@@ -33,16 +37,17 @@ export const BoardPage: React.FC = () => {
 
     const engine = new BoardEngine(canvasRef.current);
     engineRef.current = engine;
+    setEngineInstance(engine);
 
-    const interval = setInterval(() => {
-      if (engineRef.current) {
-        setZoomPercent(engineRef.current.getScalePercent());
-      }
-    }, 100);
+    const unsubscribe = engine.subscribe(() => {
+      setZoomPercent(engine.getScalePercent());
+    });
 
     return () => {
-      clearInterval(interval);
+      unsubscribe();
       engine.destroy();
+      engineRef.current = null;
+      setEngineInstance(null);
     };
   }, []);
 
@@ -87,6 +92,8 @@ export const BoardPage: React.FC = () => {
         totalChunks={totalChunks}
         onSelectChunks={setTotalChunks}
       />
+
+      <Navigator engine={engineInstance} zoomPercent={zoomPercent} />
 
       <div className={styles.hud}>
         <span>🔍 {zoomPercent}%</span>

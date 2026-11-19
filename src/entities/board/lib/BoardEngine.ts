@@ -27,6 +27,7 @@ export class BoardEngine {
   private ctx: CanvasRenderingContext2D;
   private camera = new ViewportCamera();
   private renderer: BoardRenderer;
+  private listeners = new Set<() => void>();
 
   private activeTool: CanvasTool = "select";
   private isSpacePressed = false;
@@ -57,6 +58,59 @@ export class BoardEngine {
 
     this.initListeners();
     this.resize();
+  }
+
+  public subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private notify(): void {
+    for (const listener of this.listeners) {
+      listener();
+    }
+  }
+
+  public zoomIn(): void {
+    const rect = this.canvas.getBoundingClientRect();
+    this.camera.zoomByStep("in", { x: rect.width / 2, y: rect.height / 2 });
+    this.render();
+  }
+
+  public zoomOut(): void {
+    const rect = this.canvas.getBoundingClientRect();
+    this.camera.zoomByStep("out", { x: rect.width / 2, y: rect.height / 2 });
+    this.render();
+  }
+
+  public resetView(): void {
+    this.camera.resetView();
+    this.render();
+  }
+
+  public focusWorldPoint(worldPoint: Point): void {
+    const bounded = clampPointToBoard(worldPoint, this.config);
+    this.camera.centerOnWorld(bounded, this.canvas.width, this.canvas.height);
+    this.render();
+  }
+
+  public renderMinimap(
+    minimapCtx: CanvasRenderingContext2D,
+    mapWidth: number,
+    mapHeight: number,
+  ) {
+    return this.renderer.renderMinimap(
+      minimapCtx,
+      mapWidth,
+      mapHeight,
+      this.canvas.width,
+      this.canvas.height,
+      this.camera,
+      this.config,
+      this.objects,
+    );
   }
 
   public getConfig(): BoardConfig {
@@ -385,5 +439,7 @@ export class BoardEngine {
       this.draftObject,
       this.selectedObjectId,
     );
+
+    this.notify();
   };
 }

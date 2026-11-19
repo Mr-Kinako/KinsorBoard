@@ -2,7 +2,15 @@
 
 import type { BoardConfig, BoardObject } from "../model/types";
 import type { ViewportCamera } from "./camera";
-import { getObjectBounds } from "./geometry";
+import { getBoardWorldBounds, getObjectBounds } from "./geometry";
+
+export interface MinimapTransform {
+  offsetX: number;
+  offsetY: number;
+  drawWidth: number;
+  drawHeight: number;
+  scale: number;
+}
 
 export class BoardRenderer {
   private ctx: CanvasRenderingContext2D;
@@ -41,6 +49,88 @@ export class BoardRenderer {
     }
 
     this.ctx.restore();
+  }
+
+  public renderMinimap(
+    minimapCtx: CanvasRenderingContext2D,
+    mapWidth: number,
+    mapHeight: number,
+    mainCanvasWidth: number,
+    mainCanvasHeight: number,
+    camera: ViewportCamera,
+    config: BoardConfig,
+    objects: readonly BoardObject[],
+  ): MinimapTransform {
+    const world = getBoardWorldBounds(config);
+    const pad = 8;
+    const availW = Math.max(1, mapWidth - pad * 2);
+    const availH = Math.max(1, mapHeight - pad * 2);
+    const mapScale = Math.min(availW / world.width, availH / world.height);
+
+    const drawWidth = world.width * mapScale;
+    const drawHeight = world.height * mapScale;
+    const offsetX = (mapWidth - drawWidth) / 2;
+    const offsetY = (mapHeight - drawHeight) / 2;
+
+    minimapCtx.save();
+    minimapCtx.clearRect(0, 0, mapWidth, mapHeight);
+    minimapCtx.fillStyle = "#16161c";
+    minimapCtx.fillRect(0, 0, mapWidth, mapHeight);
+
+    minimapCtx.fillStyle = "#1b1b22";
+    minimapCtx.fillRect(offsetX, offsetY, drawWidth, drawHeight);
+
+    const rows = Math.ceil(config.totalChunks / config.gridCols);
+    const chunkW = config.chunkSize * mapScale;
+    const chunkH = config.chunkSize * mapScale;
+
+    minimapCtx.strokeStyle = "rgba(142, 142, 158, 0.16)";
+    minimapCtx.lineWidth = 1;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < config.gridCols; c++) {
+        minimapCtx.strokeRect(
+          offsetX + c * chunkW,
+          offsetY + r * chunkH,
+          chunkW,
+          chunkH,
+        );
+      }
+    }
+
+    for (const obj of objects) {
+      const bounds = getObjectBounds(obj, minimapCtx);
+      const ox = offsetX + bounds.x * mapScale;
+      const oy = offsetY + bounds.y * mapScale;
+      const ow = Math.max(2, bounds.width * mapScale);
+      const oh = Math.max(2, bounds.height * mapScale);
+
+      minimapCtx.fillStyle = obj.strokeColor;
+      minimapCtx.globalAlpha = 0.75;
+      minimapCtx.fillRect(ox, oy, ow, oh);
+    }
+    minimapCtx.globalAlpha = 1;
+
+    if (mainCanvasWidth > 0 && mainCanvasHeight > 0) {
+      const vpWorldX = -camera.pan.x / camera.scale;
+      const vpWorldY = -camera.pan.y / camera.scale;
+      const vpWorldW = mainCanvasWidth / camera.scale;
+      const vpWorldH = mainCanvasHeight / camera.scale;
+
+      const vx = offsetX + vpWorldX * mapScale;
+      const vy = offsetY + vpWorldY * mapScale;
+      const vw = vpWorldW  * mapScale;
+      const vh = vpWorldH * mapScale;
+
+      minimapCtx.fillStyle = "rgba(109, 97, 156, 0.14)";
+      minimapCtx.strokeStyle = "#7d70b0";
+      minimapCtx.lineWidth = 1.5;
+      minimapCtx.fillRect(vx, vy, vw, vh);
+      minimapCtx.strokeRect(vx, vy, vw, vh);
+    }
+
+    minimapCtx.restore();
+
+    return { offsetX, offsetY, drawWidth, drawHeight, scale: mapScale };
   }
 
   private drawSelectionOutline(obj: BoardObject, scale: number): void {
