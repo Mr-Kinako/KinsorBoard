@@ -1,23 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { BoardEngine } from '@/shared/lib/canvas/BoardEngine';
+// src/pages/board/ui/BoardPage.tsx
+
+import React, { useEffect, useRef, useState } from "react";
+import { BoardEngine } from "@/shared/lib";
 import { Topbar } from "@/widgets/topbar";
-import { Toolbar } from '@/widgets/toolbar';
-import type { CanvasTool } from '@/entities/board/types';
-import styles from './BoardPage.module.scss';
+import { Toolbar } from "@/widgets/toolbar";
+import type { CanvasTool } from "@/entities/board";
+import styles from "./BoardPage.module.scss";
 
 const SHORTCUT_MAP: Record<string, CanvasTool> = {
-  v: 'select',
-  r: 'rectangle',
-  o: 'circle',
-  l: 'line',
-  p: 'pen',
-  t: 'text',
-  e: 'eraser',
-}
+  v: "select",
+  r: "rectangle",
+  o: "circle",
+  l: "line",
+  p: "pen",
+  t: "text",
+  e: "eraser",
+};
 
 export const BoardPage: React.FC = () => {
   const [zoomPercent, setZoomPercent] = useState<number>(100);
-  const [activeTool, setActiveTool] = useState<CanvasTool>('select');
+  const [activeTool, setActiveTool] = useState<CanvasTool>("select");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<BoardEngine | null>(null);
 
@@ -46,7 +48,10 @@ export const BoardPage: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+      if (
+        target &&
+        (target.tagName === "INPUT" || target.tagName === "TEXTAREA")
+      ) {
         return;
       }
       if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -57,8 +62,8 @@ export const BoardPage: React.FC = () => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return (

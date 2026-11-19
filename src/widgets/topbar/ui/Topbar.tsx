@@ -1,12 +1,12 @@
 // src/widgets/topbar/ui/Topbar.tsx
 
-import React, { useState } from 'react';
-import { APP_VERSION } from "@/app/info";
-import styles from './Topbar.module.scss';
+import React, { useState } from "react";
+import { APP_VERSION } from "@/shared/info";
+import styles from "./Topbar.module.scss";
 import icon from "../../../../public/kitty-icon.png";
 
 export const Topbar: React.FC = () => {
-  const [boardTitle, setBoardTitle] = useState<string>('Untitled Board');
+  const [boardTitle, setBoardTitle] = useState<string>("Untitled Board");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const hasIcon: string | null = icon;
@@ -34,10 +34,14 @@ export const Topbar: React.FC = () => {
             autoFocus
             onChange={(e) => setBoardTitle(e.target.value)}
             onBlur={() => setIsEditing(false)}
-            onKeyDown={(e) => e.key === 'Enter' && setIsEditing(false)}
+            onKeyDown={(e) => e.key === "Enter" && setIsEditing(false)}
           />
         ) : (
-          <div className={styles.titleDisplay} onClick={() => setIsEditing(true)} title="Click to rename">
+          <div
+            className={styles.titleDisplay}
+            onClick={() => setIsEditing(true)}
+            title="Click to rename"
+          >
             <span className={styles.titleText}>{boardTitle}</span>
             <span className={styles.editIcon}>✏️</span>
           </div>
@@ -46,21 +50,33 @@ export const Topbar: React.FC = () => {
 
       <div className={styles.actions}>
         <div className={styles.group}>
-          <button className={styles.iconBtn} title="Undo (Ctrl+Z)">↩️</button>
-          <button className={styles.iconBtn} title="Redo (Ctrl+Y)">↪️</button>
+          <button className={styles.iconBtn} title="Undo (Ctrl+Z)">
+            ↩️
+          </button>
+          <button className={styles.iconBtn} title="Redo (Ctrl+Y)">
+            ↪️
+          </button>
         </div>
 
         <div className={styles.divider} />
 
-        <button className={styles.actionBtn} onClick={() => console.log('Save board')}>
+        <button
+          className={styles.actionBtn}
+          onClick={() => console.log("Save board")}
+        >
           💾 Save
         </button>
 
-        <button className={styles.actionBtnPrimary} onClick={() => console.log('Export board')}>
+        <button
+          className={styles.actionBtnPrimary}
+          onClick={() => console.log("Export board")}
+        >
           📤 Export
         </button>
 
-        <button className={styles.iconBtn} title="Settings">⚙️</button>
+        <button className={styles.iconBtn} title="Settings">
+          ⚙️
+        </button>
       </div>
     </header>
   );

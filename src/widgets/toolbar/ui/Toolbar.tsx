@@ -1,6 +1,8 @@
-import React from 'react';
-import type { CanvasTool } from '@/entities/board/types';
-import styles from './Toolbar.module.scss';
+// src/widgets/toolbar/ui/Toolbar.tsx
+
+import React from "react";
+import type { CanvasTool } from "@/entities/board/model/types";
+import styles from "./Toolbar.module.scss";
 
 interface ToolbarProps {
   activeTool: CanvasTool;
@@ -15,16 +17,19 @@ interface ToolItem {
 }
 
 const TOOLS: ToolItem[] = [
-  { id: 'select', label: 'Select', shortcut: 'V', icon: '↖' },
-  { id: 'rectangle', label: 'Rectangle', shortcut: 'R', icon: '□' },
-  { id: 'circle', label: 'Ellipse', shortcut: 'O', icon: '○' },
-  { id: 'line', label: 'Line', shortcut: 'L', icon: '/' },
-  { id: 'pen', label: 'Pen', shortcut: 'P', icon: '✎' },
-  { id: 'text', label: 'Text', shortcut: 'T', icon: 'T' },
-  { id: 'eraser', label: 'Eraser', shortcut: 'E', icon: '⌫' },
+  { id: "select", label: "Select", shortcut: "V", icon: "↖" },
+  { id: "rectangle", label: "Rectangle", shortcut: "R", icon: "□" },
+  { id: "circle", label: "Ellipse", shortcut: "O", icon: "○" },
+  { id: "line", label: "Line", shortcut: "L", icon: "/" },
+  { id: "pen", label: "Pen", shortcut: "P", icon: "✎" },
+  { id: "text", label: "Text", shortcut: "T", icon: "T" },
+  { id: "eraser", label: "Eraser", shortcut: "E", icon: "⌫" },
 ];
 
-export const Toolbar: React.FC<ToolbarProps> = ({ activeTool, onSelectTool }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({
+  activeTool,
+  onSelectTool,
+}) => {
   return (
     <aside className={styles.toolbar} aria-label="Canvas tools">
       <div className={styles.group}>
@@ -34,7 +39,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ activeTool, onSelectTool }) =>
             <button
               key={tool.id}
               type="button"
-              className={`${styles.toolBtn} ${isActive ? styles.active : ''}`}
+              className={`${styles.toolBtn} ${isActive ? styles.active : ""}`}
               onClick={() => onSelectTool(tool.id)}
               title={`${tool.label} (${tool.shortcut})`}
               aria-pressed={isActive}
@@ -52,7 +57,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ activeTool, onSelectTool }) =>
           type="button"
           className={styles.toolBtn}
           title="Grid & Chunks (заготовка)"
-          onClick={() => console.log('Toggle grid/chunks options')}
+          onClick={() => console.log("Toggle grid/chunks options")}
         >
           <span className={styles.icon}>⊞</span>
         </button>

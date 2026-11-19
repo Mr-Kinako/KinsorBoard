@@ -1,8 +1,8 @@
 // src/app/App.tsx
 
-import { BrowserRouter, Route, Routes, } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router";
 import { AppLayout } from "./layouts/AppLayout";
-import { BoardPage } from "@/pages/board/BoardPage";
+import { BoardPage } from "@/pages/board/ui/BoardPage";
 
 export function App() {
   return (

@@ -1,3 +1,5 @@
+<!-- CONTRIBUTING.md -->
+
 # Contributing & Engineering Guidelines
 
 Этот документ фиксирует архитектурные соглашения, правила работы с кодом, версионирование и стандарты Git для **Kinsorboard**.

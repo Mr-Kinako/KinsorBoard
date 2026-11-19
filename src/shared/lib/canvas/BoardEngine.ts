@@ -1,5 +1,7 @@
+// src/shared/lib/canvas/BoardEngine.ts
+
 import type { BoardObject, CanvasTool, Point } from "@/entities/board";
-import type { BoardConfig } from './types';
+import type { BoardConfig } from "./types";
 
 export class BoardEngine {
   private canvas: HTMLCanvasElement;
@@ -10,11 +12,11 @@ export class BoardEngine {
   private pan: Point = { x: 0, y: 0 };
 
   // Instruments and State
-  private activeTool: CanvasTool = 'select';
+  private activeTool: CanvasTool = "select";
   private isPanning: boolean = false;
   private isDrawing: boolean = false;
   private startPan: Point = { x: 0, y: 0 };
-  private drawStartWorld: Point = { x: 0, y: 0 }
+  private drawStartWorld: Point = { x: 0, y: 0 };
 
   // Board objects
   private objects: BoardObject[] = [];
@@ -28,13 +30,13 @@ export class BoardEngine {
   private config: BoardConfig = {
     chunkSize: 600, // Размер одного чанка в мировых координатах
     totalChunks: 200,
-    gridCols: 14,   // Примерно под 200 чанков (сетка ~14x14)
+    gridCols: 14, // Примерно под 200 чанков (сетка ~14x14)
   };
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    const context = canvas.getContext('2d');
-    if (!context) throw new Error('Failed to get 2D context from canvas');
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Failed to get 2D context from canvas");
     this.ctx = context;
 
     this.initListeners();
@@ -90,25 +92,25 @@ export class BoardEngine {
   }
 
   private initListeners() {
-    window.addEventListener('resize', this.resize);
-    window.addEventListener('mouseup', this.onMouseUp);
+    window.addEventListener("resize", this.resize);
+    window.addEventListener("mouseup", this.onMouseUp);
 
-    this.canvas.addEventListener('mousedown', this.onMouseDown);
-    this.canvas.addEventListener('mousemove', this.onMouseMove);
+    this.canvas.addEventListener("mousedown", this.onMouseDown);
+    this.canvas.addEventListener("mousemove", this.onMouseMove);
 
-    this.canvas.addEventListener('contextmenu', this.onContextMenu);
-    this.canvas.addEventListener('wheel', this.onWheel, { passive: false });
+    this.canvas.addEventListener("contextmenu", this.onContextMenu);
+    this.canvas.addEventListener("wheel", this.onWheel, { passive: false });
   }
 
   public destroy() {
-    window.removeEventListener('resize', this.resize);
-    window.removeEventListener('mouseup', this.onMouseUp);
+    window.removeEventListener("resize", this.resize);
+    window.removeEventListener("mouseup", this.onMouseUp);
 
-    this.canvas.removeEventListener('mousedown', this.onMouseDown);
-    this.canvas.removeEventListener('mousemove', this.onMouseMove);
+    this.canvas.removeEventListener("mousedown", this.onMouseDown);
+    this.canvas.removeEventListener("mousemove", this.onMouseMove);
 
-    this.canvas.removeEventListener('contextmenu', this.onContextMenu);
-    this.canvas.removeEventListener('wheel', this.onWheel);
+    this.canvas.removeEventListener("contextmenu", this.onContextMenu);
+    this.canvas.removeEventListener("wheel", this.onWheel);
   }
 
   private onContextMenu = (e: MouseEvent): void => {
@@ -129,7 +131,7 @@ export class BoardEngine {
       this.isPanning = true;
       this.startPan = {
         x: e.clientX - this.pan.x,
-        y: e.clientY - this.pan.y
+        y: e.clientY - this.pan.y,
       };
       this.updateCursor();
       return;
@@ -139,13 +141,13 @@ export class BoardEngine {
 
     const worldPos = this.screenToWorld(e.clientX, e.clientY);
 
-    if (this.activeTool === 'eraser') {
+    if (this.activeTool === "eraser") {
       this.isDrawing = true;
       this.eraseAt(worldPos);
       return;
     }
 
-    if (this.activeTool === 'select' || this.activeTool === 'text') {
+    if (this.activeTool === "select" || this.activeTool === "text") {
       return;
     }
 
@@ -154,10 +156,10 @@ export class BoardEngine {
     const id = crypto.randomUUID();
 
     switch (this.activeTool) {
-      case 'rectangle':
+      case "rectangle":
         this.draftObject = {
           id,
-          type: 'rectangle',
+          type: "rectangle",
           x: worldPos.x,
           y: worldPos.y,
           width: 0,
@@ -166,10 +168,10 @@ export class BoardEngine {
           strokeWidth: this.defaultStrokeWidth,
         };
         break;
-      case 'circle':
+      case "circle":
         this.draftObject = {
           id,
-          type: 'circle',
+          type: "circle",
           x: worldPos.x,
           y: worldPos.y,
           radiusX: 0,
@@ -178,20 +180,20 @@ export class BoardEngine {
           strokeWidth: this.defaultStrokeWidth,
         };
         break;
-      case 'line':
+      case "line":
         this.draftObject = {
           id,
-          type: 'line',
+          type: "line",
           start: { ...worldPos },
           end: { ...worldPos },
           strokeColor: this.defaultStroke,
           strokeWidth: this.defaultStrokeWidth,
         };
         break;
-      case 'pen':
+      case "pen":
         this.draftObject = {
           id,
-          type: 'pen',
+          type: "pen",
           points: [{ ...worldPos }],
           strokeColor: this.defaultStroke,
           strokeWidth: this.defaultStrokeWidth,
@@ -213,7 +215,7 @@ export class BoardEngine {
 
     const currentWorld = this.screenToWorld(e.clientX, e.clientY);
 
-    if (this.activeTool === 'eraser') {
+    if (this.activeTool === "eraser") {
       this.eraseAt(currentWorld);
       return;
     }
@@ -221,14 +223,18 @@ export class BoardEngine {
     if (!this.draftObject) return;
 
     switch (this.draftObject.type) {
-      case 'rectangle': {
+      case "rectangle": {
         this.draftObject.x = Math.min(this.drawStartWorld.x, currentWorld.x);
         this.draftObject.y = Math.min(this.drawStartWorld.y, currentWorld.y);
-        this.draftObject.width = Math.abs(currentWorld.x - this.drawStartWorld.x);
-        this.draftObject.height = Math.abs(currentWorld.y - this.drawStartWorld.y);
+        this.draftObject.width = Math.abs(
+          currentWorld.x - this.drawStartWorld.x,
+        );
+        this.draftObject.height = Math.abs(
+          currentWorld.y - this.drawStartWorld.y,
+        );
         break;
       }
-      case 'circle': {
+      case "circle": {
         const minX = Math.min(this.drawStartWorld.x, currentWorld.x);
         const minY = Math.min(this.drawStartWorld.y, currentWorld.y);
         const radiusX = Math.abs(currentWorld.x - this.drawStartWorld.x) / 2;
@@ -239,11 +245,11 @@ export class BoardEngine {
         this.draftObject.radiusY = radiusY;
         break;
       }
-      case 'line': {
+      case "line": {
         this.draftObject.end = { ...currentWorld };
         break;
       }
-      case 'pen': {
+      case "pen": {
         this.draftObject.points.push({ ...currentWorld });
         break;
       }
@@ -273,13 +279,13 @@ export class BoardEngine {
 
   private isObjectValid(obj: BoardObject): boolean {
     switch (obj.type) {
-      case 'rectangle':
+      case "rectangle":
         return obj.width > 2 && obj.height > 2;
-      case 'circle':
+      case "circle":
         return obj.radiusX > 2 && obj.radiusY > 2;
-      case 'line':
+      case "line":
         return Math.hypot(obj.end.x - obj.start.x, obj.end.y - obj.start.y) > 2;
-      case 'pen':
+      case "pen":
         return obj.points.length > 1;
     }
   }
@@ -288,7 +294,9 @@ export class BoardEngine {
     const threshold = 10 / this.scale;
     const prevLength = this.objects.length;
 
-    this.objects = this.objects.filter((obj) => !this.hitTest(obj, point, threshold));
+    this.objects = this.objects.filter(
+      (obj) => !this.hitTest(obj, point, threshold),
+    );
 
     if (this.objects.length !== prevLength) {
       this.render();
@@ -297,29 +305,31 @@ export class BoardEngine {
 
   private hitTest(obj: BoardObject, p: Point, pad: number): boolean {
     switch (obj.type) {
-      case 'rectangle':
+      case "rectangle":
         return (
           p.x >= obj.x - pad &&
           p.x <= obj.x + obj.width + pad &&
           p.y >= obj.y - pad &&
           p.y <= obj.y + obj.height + pad
         );
-      case 'circle':
+      case "circle":
         return (
           p.x >= obj.x - obj.radiusX - pad &&
           p.x <= obj.x + obj.radiusX + pad &&
           p.y >= obj.y - obj.radiusY - pad &&
           p.y <= obj.y + obj.radiusY + pad
         );
-      case 'line': {
+      case "line": {
         const minX = Math.min(obj.start.x, obj.end.x) - pad;
         const maxX = Math.max(obj.start.x, obj.end.x) + pad;
         const minY = Math.min(obj.start.y, obj.end.y) - pad;
         const maxY = Math.max(obj.start.y, obj.end.y) + pad;
         return p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY;
       }
-      case 'pen':
-        return obj.points.some((pt) => Math.hypot(pt.x - p.x, pt.y - p.y) <= pad);
+      case "pen":
+        return obj.points.some(
+          (pt) => Math.hypot(pt.x - p.x, pt.y - p.y) <= pad,
+        );
     }
   }
 
@@ -329,7 +339,8 @@ export class BoardEngine {
     const zoomFactor = 1.1;
     const oldScale = this.scale;
 
-    this.scale = e.deltaY < 0 ? this.scale * zoomFactor : this.scale / zoomFactor;
+    this.scale =
+      e.deltaY < 0 ? this.scale * zoomFactor : this.scale / zoomFactor;
     this.scale = Math.max(0.1, Math.min(5, this.scale));
 
     const rect = this.canvas.getBoundingClientRect();
@@ -346,7 +357,7 @@ export class BoardEngine {
     const { width, height } = this.canvas;
 
     this.ctx.save();
-    this.ctx.fillStyle = '#131318';
+    this.ctx.fillStyle = "#131318";
     this.ctx.fillRect(0, 0, width, height);
 
     this.ctx.translate(this.pan.x, this.pan.y);
@@ -369,25 +380,33 @@ export class BoardEngine {
     this.ctx.save();
     this.ctx.strokeStyle = obj.strokeColor;
     this.ctx.lineWidth = obj.strokeWidth;
-    this.ctx.lineCap = 'round';
-    this.ctx.lineJoin = 'round';
+    this.ctx.lineCap = "round";
+    this.ctx.lineJoin = "round";
 
     switch (obj.type) {
-      case 'rectangle':
+      case "rectangle":
         this.ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
         break;
-      case 'circle':
+      case "circle":
         this.ctx.beginPath();
-        this.ctx.ellipse(obj.x, obj.y, obj.radiusX, obj.radiusY, 0, 0, Math.PI * 2);
+        this.ctx.ellipse(
+          obj.x,
+          obj.y,
+          obj.radiusX,
+          obj.radiusY,
+          0,
+          0,
+          Math.PI * 2,
+        );
         this.ctx.stroke();
         break;
-      case 'line':
+      case "line":
         this.ctx.beginPath();
         this.ctx.moveTo(obj.start.x, obj.start.y);
         this.ctx.lineTo(obj.end.x, obj.end.y);
         this.ctx.stroke();
         break;
-      case 'pen':
+      case "pen":
         if (obj.points.length < 2) break;
         this.ctx.beginPath();
         this.ctx.moveTo(obj.points[0].x, obj.points[0].y);
@@ -408,7 +427,7 @@ export class BoardEngine {
     const totalWidth = gridCols * chunkSize;
     const totalHeight = rows * chunkSize;
 
-    this.ctx.fillStyle = '#16161c';
+    this.ctx.fillStyle = "#16161c";
     this.ctx.fillRect(0, 0, totalWidth, totalHeight);
 
     this.ctx.lineWidth = 1 / this.scale;
@@ -418,11 +437,11 @@ export class BoardEngine {
         const x = c * chunkSize;
         const y = r * chunkSize;
 
-        this.ctx.strokeStyle = '#2a2a35';
+        this.ctx.strokeStyle = "#2a2a35";
         this.ctx.strokeRect(x, y, chunkSize, chunkSize);
 
-        this.ctx.fillStyle = '#5c5c6b';
-        this.ctx.font = '12px Inter, sans-serif';
+        this.ctx.fillStyle = "#5c5c6b";
+        this.ctx.font = "12px Inter, sans-serif";
         this.ctx.fillText(`[${c}, ${r}]`, x + 16, y + 24);
 
         this.drawSubGrid(x, y, chunkSize);
@@ -432,7 +451,7 @@ export class BoardEngine {
 
   private drawSubGrid(startX: number, startY: number, size: number): void {
     const step = 40;
-    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)';
+    this.ctx.strokeStyle = "rgba(255, 255, 255, 0.025)";
     this.ctx.lineWidth = 1 / this.scale;
 
     this.ctx.beginPath();

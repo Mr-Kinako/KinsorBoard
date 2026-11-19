@@ -1,13 +1,7 @@
 // src/entities/board/model/tool.ts
 
 export type CanvasTool =
-  | 'select'
-  | 'rectangle'
-  | 'circle'
-  | 'line'
-  | 'pen'
-  | 'text'
-  | 'eraser';
+  "select" | "rectangle" | "circle" | "line" | "pen" | "text" | "eraser";
 
 export interface Point {
   x: number;
@@ -21,7 +15,7 @@ interface BaseBoardObject {
 }
 
 export interface RectObject extends BaseBoardObject {
-  type: 'rectangle';
+  type: "rectangle";
   x: number;
   y: number;
   width: number;
@@ -29,7 +23,7 @@ export interface RectObject extends BaseBoardObject {
 }
 
 export interface CircleObject extends BaseBoardObject {
-  type: 'circle';
+  type: "circle";
   x: number;
   y: number;
   radiusX: number;
@@ -37,13 +31,13 @@ export interface CircleObject extends BaseBoardObject {
 }
 
 export interface LineObject extends BaseBoardObject {
-  type: 'line';
+  type: "line";
   start: Point;
   end: Point;
 }
 
 export interface PenObject extends BaseBoardObject {
-  type: 'pen';
+  type: "pen";
   points: Point[];
 }
 
