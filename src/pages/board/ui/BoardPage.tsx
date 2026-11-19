@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BoardEngine } from '@/shared/lib/canvas/BoardEngine';
 import { Topbar } from "@/widgets/topbar";
+import { Toolbar } from '@/widgets/toolbar';
+import type { CanvasTool } from '@/entities/board/model/tool';
 import styles from './BoardPage.module.scss';
 
 export const BoardPage: React.FC = () => {
+  const [zoomPercent, setZoomPercent] = useState<number>(100);
+  const [activeTool, setActiveTool] = useState<CanvasTool>('select');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<BoardEngine | null>(null);
-  const [zoomPercent, setZoomPercent] = useState<number>(100);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -28,6 +31,8 @@ export const BoardPage: React.FC = () => {
   return (
     <div className={styles.boardContainer}>
       <Topbar />
+
+      <Toolbar activeTool={activeTool} onSelectTool={setActiveTool} />
 
       <canvas ref={canvasRef} className={styles.canvas} />
 

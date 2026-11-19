@@ -21,7 +21,7 @@ export const Topbar: React.FC = () => {
           )}
         </div>
         <span className={styles.brandName}>Kinsorboard</span>
-        <span className={styles.version}>v0.1.0-alpha.8</span>
+        <span className={styles.version}>v0.1.0-alpha.9</span>
       </div>
 
       <div className={styles.titleSection}>
