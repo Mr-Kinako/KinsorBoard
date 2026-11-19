@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BoardEngine } from '@/shared/lib/canvas/BoardEngine';
+import { Topbar } from "@/widgets/topbar";
 import styles from './BoardPage.module.scss';
 
 export const BoardPage: React.FC = () => {
@@ -9,7 +10,6 @@ export const BoardPage: React.FC = () => {
 
   useEffect(() => {
     if (!canvasRef.current) return;
-
     const engine = new BoardEngine(canvasRef.current);
     engineRef.current = engine;
 
@@ -27,7 +27,8 @@ export const BoardPage: React.FC = () => {
 
   return (
     <div className={styles.boardContainer}>
-      {/* Сам HTML5 Canvas на весь экран */}
+      <Topbar />
+
       <canvas ref={canvasRef} className={styles.canvas} />
 
       <div className={styles.hud}>

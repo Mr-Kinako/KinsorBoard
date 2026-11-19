@@ -1,0 +1,179 @@
+// src/widgets/topbar/ui/Topbar.module.scss
+
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $topbar-height;
+  background-color: $bg-panel;
+  border-bottom: 1px solid $border-subtle;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: $z-ui;
+  user-select: none;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .logoIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    font-size: 14px;
+
+    .logo {
+      width: inherit;
+      height: inherit;
+      border-radius: 50%;
+    }
+
+    .logoPlaceholder {
+      width: inherit;
+      height: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, $accent-primary, #4c4669);
+      border-radius: $radius-sm;
+    }
+  }
+
+  .brandName {
+    font-weight: 600;
+    color: $text-primary;
+    font-size: 14px;
+  }
+
+  .version {
+    font-size: 11px;
+    color: $text-muted;
+    background-color: $bg-input;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+
+  .titleDisplay {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background-color: $bg-panel-hover;
+
+      .editIcon {
+        opacity: 1;
+      }
+    }
+
+    .titleText {
+      font-weight: 500;
+      color: $text-primary;
+    }
+
+    .editIcon {
+      font-size: 11px;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+  }
+
+  .titleInput {
+    background-color: $bg-input;
+    border: 1px solid $border-active;
+    color: $text-primary;
+    padding: 6px 10px;
+    border-radius: $radius-sm;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .group {
+    display: flex;
+    gap: 4px;
+  }
+
+  .divider {
+    width: 1px;
+    height: 18px;
+    background-color: $border-subtle;
+    margin: 0 4px;
+  }
+
+  .iconBtn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: $text-secondary;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: $bg-panel-hover;
+      color: $text-primary;
+    }
+  }
+
+  .actionBtn {
+    background-color: transparent;
+    border: 1px solid $border-subtle;
+    color: $text-primary;
+    padding: 6px 12px;
+    border-radius: $radius-sm;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background-color: $bg-panel-hover;
+    }
+  }
+
+  .actionBtnPrimary {
+    background-color: $accent-primary;
+    border: 1px solid transparent;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: $radius-sm;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background-color: $accent-primary-hover;
+    }
+  }
+}
