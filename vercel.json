@@ -2,7 +2,8 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/kinland/(.*)"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
