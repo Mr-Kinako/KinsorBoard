@@ -68,6 +68,41 @@
   display: flex;
   align-items: center;
 
+  .inputWrapper {
+    display: inline-grid;
+    align-items: center;
+    min-width: 80px;
+    max-width: 136px;
+
+    .inputSizer,
+    .titleInput {
+      grid-area: 1 / 1;
+      width: 100%;
+      min-width: 0;
+      padding: 6px 10px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.2;
+      border: 1px solid transparent;
+    }
+
+    .inputSizer {
+      visibility: hidden;
+      white-space: pre;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .titleInput {
+      background-color: $bg-input;
+      border-color: $border-active;
+      color: $text-primary;
+      border-radius: $radius-sm;
+      outline: none;
+    }
+  }
+
   .titleDisplay {
     display: flex;
     align-items: center;
@@ -86,26 +121,20 @@
     }
 
     .titleText {
+      max-width: 160px;
       font-weight: 500;
       color: $text-primary;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .editIcon {
       font-size: 11px;
       opacity: 0;
       transition: opacity 0.15s ease;
+      transform: translateY(1px);
     }
-  }
-
-  .titleInput {
-    background-color: $bg-input;
-    border: 1px solid $border-active;
-    color: $text-primary;
-    padding: 6px 10px;
-    border-radius: $radius-sm;
-    font-size: 13px;
-    outline: none;
-    font-family: inherit;
   }
 }
 
@@ -145,6 +174,16 @@
     }
   }
 
+  .actionIcon {
+    transform: translateY(1px);
+  }
+
+  .actionBtn,
+  .actionBtnPrimary {
+    display: inline-flex;
+    gap: 8px;
+  }
+
   .actionBtn {
     background-color: transparent;
     border: 1px solid $border-subtle;
@@ -165,7 +204,7 @@
     background-color: $accent-primary;
     border: 1px solid transparent;
     color: #fff;
-    padding: 6px 14px;
+    padding: 6px 12px 6px 10px;
     border-radius: $radius-sm;
     font-size: 12px;
     font-weight: 500;
