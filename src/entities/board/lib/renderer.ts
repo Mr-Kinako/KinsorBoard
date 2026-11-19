@@ -1,8 +1,8 @@
 // src/entities/board/lib/renderer.ts
 
-import type { BoardConfig, BoardObject } from '../model/types';
-import type { ViewportCamera } from './camera';
-import { getObjectBounds } from './geometry';
+import type { BoardConfig, BoardObject } from "../model/types";
+import type { ViewportCamera } from "./camera";
+import { getObjectBounds } from "./geometry";
 
 export class BoardRenderer {
   private ctx: CanvasRenderingContext2D;
@@ -21,7 +21,7 @@ export class BoardRenderer {
     selectedObjectId: string | null,
   ): void {
     this.ctx.save();
-    this.ctx.fillStyle = '#131318';
+    this.ctx.fillStyle = "#131318";
     this.ctx.fillRect(0, 0, width, height);
 
     this.ctx.translate(camera.pan.x, camera.pan.y);
@@ -48,10 +48,15 @@ export class BoardRenderer {
     const pad = 6 / scale;
 
     this.ctx.save();
-    this.ctx.strokeStyle = '#6d619c';
+    this.ctx.strokeStyle = "#6d619c";
     this.ctx.lineWidth = 1.5 / scale;
     this.ctx.setLineDash([4 / scale, 4 / scale]);
-    this.ctx.strokeRect(b.x - pad, b.y - pad, b.width + pad * 2, b.height + pad * 2);
+    this.ctx.strokeRect(
+      b.x - pad,
+      b.y - pad,
+      b.width + pad * 2,
+      b.height + pad * 2,
+    );
     this.ctx.restore();
   }
 
@@ -60,25 +65,33 @@ export class BoardRenderer {
     this.ctx.strokeStyle = obj.strokeColor;
     this.ctx.fillStyle = obj.strokeColor;
     this.ctx.lineWidth = obj.strokeWidth;
-    this.ctx.lineCap = 'round';
-    this.ctx.lineJoin = 'round';
+    this.ctx.lineCap = "round";
+    this.ctx.lineJoin = "round";
 
     switch (obj.type) {
-      case 'rectangle':
+      case "rectangle":
         this.ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
         break;
-      case 'circle':
+      case "circle":
         this.ctx.beginPath();
-        this.ctx.ellipse(obj.x, obj.y, obj.radiusX, obj.radiusY, 0, 0, Math.PI * 2);
+        this.ctx.ellipse(
+          obj.x,
+          obj.y,
+          obj.radiusX,
+          obj.radiusY,
+          0,
+          0,
+          Math.PI * 2,
+        );
         this.ctx.stroke();
         break;
-      case 'line':
+      case "line":
         this.ctx.beginPath();
         this.ctx.moveTo(obj.start.x, obj.start.y);
         this.ctx.lineTo(obj.end.x, obj.end.y);
         this.ctx.stroke();
         break;
-      case 'pen':
+      case "pen":
         if (obj.points.length < 2) break;
         this.ctx.beginPath();
         this.ctx.moveTo(obj.points[0].x, obj.points[0].y);
@@ -87,7 +100,7 @@ export class BoardRenderer {
         }
         this.ctx.stroke();
         break;
-      case 'text':
+      case "text":
         this.ctx.font = `${obj.fontSize}px Inter, sans-serif`;
         this.ctx.fillText(obj.content, obj.x, obj.y);
         break;
@@ -100,7 +113,7 @@ export class BoardRenderer {
     const { chunkSize, gridCols, totalChunks } = config;
     const rows = Math.ceil(totalChunks / gridCols);
 
-    this.ctx.fillStyle = '#16161c';
+    this.ctx.fillStyle = "#16161c";
     this.ctx.fillRect(0, 0, gridCols * chunkSize, rows * chunkSize);
     this.ctx.lineWidth = 1 / scale;
 
@@ -109,11 +122,11 @@ export class BoardRenderer {
         const x = c * chunkSize;
         const y = r * chunkSize;
 
-        this.ctx.strokeStyle = '#2a2a35';
+        this.ctx.strokeStyle = "#2a2a35";
         this.ctx.strokeRect(x, y, chunkSize, chunkSize);
 
-        this.ctx.fillStyle = '#5c5c6b';
-        this.ctx.font = '12px Inter, sans-serif';
+        this.ctx.fillStyle = "#5c5c6b";
+        this.ctx.font = "12px Inter, sans-serif";
         this.ctx.fillText(`[${c}, ${r}]`, x + 16, y + 24);
 
         this.drawSubGrid(x, y, chunkSize, scale);
@@ -121,9 +134,14 @@ export class BoardRenderer {
     }
   }
 
-  private drawSubGrid(startX: number, startY: number, size: number, scale: number): void {
+  private drawSubGrid(
+    startX: number,
+    startY: number,
+    size: number,
+    scale: number,
+  ): void {
     const step = 40;
-    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)';
+    this.ctx.strokeStyle = "rgba(255, 255, 255, 0.025)";
     this.ctx.lineWidth = 1 / scale;
 
     this.ctx.beginPath();

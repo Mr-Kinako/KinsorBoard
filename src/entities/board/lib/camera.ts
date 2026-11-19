@@ -1,6 +1,6 @@
 // src/entities/board/lib/camera.ts
 
-import type { Point } from '../model/types';
+import type { Point } from "../model/types";
 
 export class ViewportCamera {
   public scale = 1;
@@ -17,7 +17,12 @@ export class ViewportCamera {
     };
   }
 
-  public zoomAt(deltaY: number, clientX: number, clientY: number, rect: DOMRect): void {
+  public zoomAt(
+    deltaY: number,
+    clientX: number,
+    clientY: number,
+    rect: DOMRect,
+  ): void {
     const oldScale = this.scale;
     const nextScale =
       deltaY < 0 ? this.scale * this.zoomFactor : this.scale / this.zoomFactor;

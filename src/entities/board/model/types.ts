@@ -21,13 +21,7 @@ export interface BoardConfig {
 }
 
 export type CanvasTool =
-  | 'select'
-  | 'rectangle'
-  | 'circle'
-  | 'line'
-  | 'pen'
-  | 'text'
-  | 'eraser';
+  "select" | "rectangle" | "circle" | "line" | "pen" | "text" | "eraser";
 
 interface BaseBoardObject {
   id: string;
@@ -36,7 +30,7 @@ interface BaseBoardObject {
 }
 
 export interface RectObject extends BaseBoardObject {
-  type: 'rectangle';
+  type: "rectangle";
   x: number;
   y: number;
   width: number;
@@ -44,7 +38,7 @@ export interface RectObject extends BaseBoardObject {
 }
 
 export interface CircleObject extends BaseBoardObject {
-  type: 'circle';
+  type: "circle";
   x: number;
   y: number;
   radiusX: number;
@@ -52,18 +46,18 @@ export interface CircleObject extends BaseBoardObject {
 }
 
 export interface LineObject extends BaseBoardObject {
-  type: 'line';
+  type: "line";
   start: Point;
   end: Point;
 }
 
 export interface PenObject extends BaseBoardObject {
-  type: 'pen';
+  type: "pen";
   points: Point[];
 }
 
 export interface TextObject extends BaseBoardObject {
-  type: 'text';
+  type: "text";
   x: number;
   y: number;
   content: string;
@@ -71,8 +65,4 @@ export interface TextObject extends BaseBoardObject {
 }
 
 export type BoardObject =
-  | RectObject
-  | CircleObject
-  | LineObject
-  | PenObject
-  | TextObject;
+  RectObject | CircleObject | LineObject | PenObject | TextObject;
