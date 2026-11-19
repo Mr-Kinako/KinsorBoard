@@ -1,10 +1,14 @@
 // src/pages/board/ui/BoardPage.tsx
 
 import React, { useEffect, useRef, useState } from "react";
-import { BoardEngine } from "@/entities/board";
-import type { CanvasTool } from "@/entities/board";
+import {
+  BoardEngine,
+  type CanvasTool,
+  type ChunkPreset,
+} from "@/entities/board";
 import { Topbar } from "@/widgets/topbar";
 import { Toolbar } from "@/widgets/toolbar";
+import { CanvasSizePanel } from "@/widgets/canvas-size";
 import styles from "./BoardPage.module.scss";
 
 const SHORTCUT_MAP: Record<string, CanvasTool> = {
@@ -20,6 +24,7 @@ const SHORTCUT_MAP: Record<string, CanvasTool> = {
 export const BoardPage: React.FC = () => {
   const [zoomPercent, setZoomPercent] = useState<number>(100);
   const [activeTool, setActiveTool] = useState<CanvasTool>("select");
+  const [totalChunks, setTotalChunks] = useState<ChunkPreset>(200);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<BoardEngine | null>(null);
 
@@ -46,8 +51,13 @@ export const BoardPage: React.FC = () => {
   }, [activeTool]);
 
   useEffect(() => {
+    engineRef.current?.setConfig(totalChunks);
+  }, [totalChunks]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
+
       if (
         target &&
         (target.tagName === "INPUT" || target.tagName === "TEXTAREA")
@@ -73,10 +83,15 @@ export const BoardPage: React.FC = () => {
 
       <canvas ref={canvasRef} className={styles.canvas} />
 
+      <CanvasSizePanel
+        totalChunks={totalChunks}
+        onSelectChunks={setTotalChunks}
+      />
+
       <div className={styles.hud}>
         <span>🔍 {zoomPercent}%</span>
         <span>|</span>
-        <span>Grid: 200 Chunks</span>
+        <span>Grid: {totalChunks} Chunks</span>
       </div>
     </div>
   );
