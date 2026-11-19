@@ -42,6 +42,7 @@ export const Topbar: React.FC = () => {
           className={styles.brandName}
           target="_blank"
           rel="noopener noreferrer"
+          title="В данный момент ведёт на GitHub"
         >
           {APP_NAME}
         </a>
