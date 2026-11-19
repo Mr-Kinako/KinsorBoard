@@ -111,6 +111,24 @@ export const BoardPage: React.FC = () => {
       <Navigator engine={engineInstance} zoomPercent={zoomPercent} />
 
       <div className={styles.hud}>
+        <div>
+          <b>v: </b> <code style={{ background: "rgb(163, 225, 248, 0.1)", fontFamily: "monospace" }}>Select</code>; {" "}
+
+          <b>r: </b> <code style={{ background: "rgb(163, 225, 248, 0.1)", fontFamily: "monospace" }}>Rectangle</code>; {" "}
+
+          <b>p: </b> <code style={{ background: "rgb(163, 225, 248, 0.1)", fontFamily: "monospace" }}>Pen</code>; {" "}
+
+          <b>t: </b> <code style={{ background: "rgb(163, 225, 248, 0.1)", fontFamily: "monospace" }}>Text</code>; {" "}
+
+          <b>e: </b> <code style={{ background: "rgb(163, 225, 248, 0.1)", fontFamily: "monospace" }}>Erase</code>; {" "}
+
+          <b>MouseWheel: </b> <code style={{ background: "rgb(163, 225, 248, 0.1)", fontFamily: "monospace" }}>Zoom</code>; {" "}
+
+          <b>LBM+Space: </b> <code style={{ background: "rgb(163, 225, 248, 0.1)", fontFamily: "monospace" }}>Moving canvas</code>;
+        </div>
+
+         <span>|</span>
+
         <span>🔍 {zoomPercent}%</span>
         <span>|</span>
         <span>Grid: {totalChunks} Chunks</span>

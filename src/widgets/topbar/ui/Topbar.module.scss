@@ -53,6 +53,7 @@
     font-weight: 600;
     color: $text-primary;
     font-size: 14px;
+    text-decoration: none;
   }
 
   .version {
@@ -112,6 +113,18 @@
     cursor: pointer;
     transition: background 0.15s ease;
 
+    &.disabled {
+      color: $text-muted;
+      cursor: not-allowed;
+    }
+    &.disabled:hover {
+      background-color: transparent;
+
+      .editIcon {
+        opacity: 0;
+      }
+    }
+
     &:hover {
       background-color: $bg-panel-hover;
 
@@ -127,6 +140,11 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+
+      &.disabled {
+        color: $text-muted;
+        cursor: not-allowed;
+      }
     }
 
     .editIcon {
@@ -168,6 +186,15 @@
     cursor: pointer;
     transition: all 0.15s ease;
 
+    &:disabled {
+      color: $text-muted;
+      cursor: not-allowed;
+    }
+    &:disabled:hover {
+      background-color: transparent;
+      color: $text-muted;
+    }
+
     &:hover {
       background-color: $bg-panel-hover;
       color: $text-primary;
@@ -195,6 +222,15 @@
     cursor: pointer;
     transition: background 0.15s ease;
 
+    &:disabled {
+      color: $text-muted;
+      cursor: not-allowed;
+    }
+    &:disabled:hover {
+      background-color: transparent;
+      color: $text-muted;
+    }
+
     &:hover {
       background-color: $bg-panel-hover;
     }
@@ -210,6 +246,15 @@
     font-weight: 500;
     cursor: pointer;
     transition: background 0.15s ease;
+
+    &:disabled {
+      color: $text-secondary;
+      cursor: not-allowed;
+    }
+    &:disabled:hover {
+      background-color: $accent-primary;
+      color: $text-secondary;
+    }
 
     &:hover {
       background-color: $accent-primary-hover;

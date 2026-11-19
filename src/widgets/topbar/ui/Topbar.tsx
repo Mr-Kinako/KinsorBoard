@@ -1,7 +1,7 @@
 // src/widgets/topbar/ui/Topbar.tsx
 
 import React, { useState } from "react";
-import { APP_VERSION } from "@/shared/info";
+import { APP_NAME, APP_VERSION } from "@/shared/info";
 import {
   LuSave,
   LuPen,
@@ -37,7 +37,14 @@ export const Topbar: React.FC = () => {
             <span className={styles.logoPlaceholder}>K</span>
           )}
         </div>
-        <span className={styles.brandName}>Kinsorboard</span>
+        <a
+          href="https://github.com/Mr-Kinako/KinsorBoard"
+          className={styles.brandName}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {APP_NAME}
+        </a>
         <span className={styles.version}>v{APP_VERSION}</span>
       </div>
 
@@ -65,11 +72,11 @@ export const Topbar: React.FC = () => {
           </div>
         ) : (
           <div
-            className={styles.titleDisplay}
-            onClick={() => setIsEditing(true)}
+            className={`${styles.titleDisplay} ${styles.disabled}`}
+            onClick={() => setIsEditing(false)}
             title="Click to rename"
           >
-            <span className={styles.titleText}>{boardTitle}</span>
+            <span className={`${styles.titleText} ${styles.disabled}`}>{boardTitle}</span>
             <span className={styles.editIcon}>
               <LuPen />
             </span>
@@ -79,10 +86,18 @@ export const Topbar: React.FC = () => {
 
       <div className={styles.actions}>
         <div className={styles.group}>
-          <button className={styles.iconBtn} title="Undo (Ctrl+Z)">
+          <button
+            className={styles.iconBtn}
+            title="Undo (Ctrl+Z)"
+            disabled
+          >
             <LuUndo2 />
           </button>
-          <button className={styles.iconBtn} title="Redo (Ctrl+Y)">
+          <button
+            className={styles.iconBtn}
+            title="Redo (Ctrl+Y)"
+            disabled
+          >
             <LuRedo2 />
           </button>
         </div>
@@ -92,6 +107,7 @@ export const Topbar: React.FC = () => {
         <button
           className={styles.actionBtn}
           onClick={() => console.log("Save board")}
+          disabled
         >
           <span className={styles.actionIcon}>
             <LuSave />
@@ -102,6 +118,7 @@ export const Topbar: React.FC = () => {
         <button
           className={styles.actionBtnPrimary}
           onClick={() => console.log("Export board")}
+          disabled
         >
           <span className={styles.actionIcon}>
             <LuArrowUpFromLine />
@@ -109,7 +126,11 @@ export const Topbar: React.FC = () => {
           Export
         </button>
 
-        <button className={styles.iconBtn} title="Settings">
+        <button
+          className={styles.iconBtn}
+          title="Settings"
+          disabled
+        >
           <LuSettings />
         </button>
       </div>
