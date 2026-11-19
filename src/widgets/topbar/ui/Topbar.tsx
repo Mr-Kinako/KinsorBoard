@@ -8,7 +8,7 @@ import {
   LuUndo2,
   LuRedo2,
   LuArrowUpFromLine,
-  LuSettings
+  LuSettings,
 } from "react-icons/lu";
 import styles from "./Topbar.module.scss";
 import icon from "../../../../public/kitty-icon.png";
@@ -96,7 +96,6 @@ export const Topbar: React.FC = () => {
           <span className={styles.actionIcon}>
             <LuSave />
           </span>
-
           Save
         </button>
 
@@ -107,7 +106,6 @@ export const Topbar: React.FC = () => {
           <span className={styles.actionIcon}>
             <LuArrowUpFromLine />
           </span>
-
           Export
         </button>
 

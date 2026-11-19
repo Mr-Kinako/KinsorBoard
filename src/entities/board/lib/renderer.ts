@@ -1,6 +1,6 @@
 // src/entities/board/lib/renderer.ts
 
-import type { BoardConfig, BoardObject } from "../model/types";
+import type { BoardConfig, BoardObject, SelectionArea } from "../model/types";
 import type { ViewportCamera } from "./camera";
 import { getBoardWorldBounds, getObjectBounds } from "./geometry";
 
@@ -14,9 +14,12 @@ export interface MinimapTransform {
 
 export class BoardRenderer {
   private ctx: CanvasRenderingContext2D;
+  private imageCache = new Map<string, HTMLImageElement>();
+  private onImageLoaded?: () => void;
 
-  constructor(ctx: CanvasRenderingContext2D) {
+  constructor(ctx: CanvasRenderingContext2D, onImageLoaded?: () => void) {
     this.ctx = ctx;
+    this.onImageLoaded = onImageLoaded;
   }
 
   public render(
@@ -27,6 +30,7 @@ export class BoardRenderer {
     objects: readonly BoardObject[],
     draftObject: BoardObject | null,
     selectedObjectId: string | null,
+    selectionArea: SelectionArea | null = null,
   ): void {
     this.ctx.save();
     this.ctx.fillStyle = "#131318";
@@ -44,11 +48,38 @@ export class BoardRenderer {
       }
     }
 
-    if (draftObject) {
-      this.drawObject(draftObject);
-    }
+    if (draftObject) this.drawObject(draftObject);
+    if (selectionArea) this.drawSelectionArea(selectionArea, camera.scale);
 
     this.ctx.restore();
+  }
+
+  private drawSelectionArea(area: SelectionArea, scale: number): void {
+    this.ctx.save();
+    this.ctx.fillStyle = "rgba(109, 97, 156, 0.14)";
+    this.ctx.strokeStyle = "#a8a2d0";
+    this.ctx.lineWidth = 1.5 / scale;
+    this.ctx.setLineDash([5 / scale, 4 / scale]);
+    this.ctx.fillRect(area.x, area.y, area.width, area.height);
+    this.ctx.strokeRect(area.x, area.y, area.width, area.height);
+    this.ctx.restore();
+  }
+
+  private getCachedImage(src: string): HTMLImageElement | null {
+    const existing = this.imageCache.get(src);
+    if (existing) {
+      return existing.complete && existing.naturalWidth > 0 ? existing : null;
+    }
+
+    const img = new Image();
+
+    img.onload = () => {
+      this.onImageLoaded?.();
+    };
+    img.src = src;
+
+    this.imageCache.set(src, img);
+    return null;
   }
 
   public renderMinimap(
@@ -118,7 +149,7 @@ export class BoardRenderer {
 
       const vx = offsetX + vpWorldX * mapScale;
       const vy = offsetY + vpWorldY * mapScale;
-      const vw = vpWorldW  * mapScale;
+      const vw = vpWorldW * mapScale;
       const vh = vpWorldH * mapScale;
 
       minimapCtx.fillStyle = "rgba(109, 97, 156, 0.14)";
@@ -194,6 +225,15 @@ export class BoardRenderer {
         this.ctx.font = `${obj.fontSize}px Inter, sans-serif`;
         this.ctx.fillText(obj.content, obj.x, obj.y);
         break;
+      case "image": {
+        const img = this.getCachedImage(obj.src);
+        if (img) {
+          this.ctx.drawImage(img, obj.x, obj.y, obj.width, obj.height);
+        } else {
+          this.ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+        }
+        break;
+      }
     }
 
     this.ctx.restore();

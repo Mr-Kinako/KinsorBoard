@@ -12,6 +12,13 @@ export interface BoundingBox {
   height: number;
 }
 
+export interface SelectionArea {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export type ChunkPreset = 100 | 200 | 400;
 
 export interface BoardConfig {
@@ -21,7 +28,15 @@ export interface BoardConfig {
 }
 
 export type CanvasTool =
-  "select" | "rectangle" | "circle" | "line" | "pen" | "text" | "eraser";
+  | "select"
+  | "selection-area"
+  | "rectangle"
+  | "circle"
+  | "line"
+  | "pen"
+  | "text"
+  | "image"
+  | "eraser";
 
 interface BaseBoardObject {
   id: string;
@@ -64,5 +79,14 @@ export interface TextObject extends BaseBoardObject {
   fontSize: number;
 }
 
+export interface ImageObject extends BaseBoardObject {
+  type: "image";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  src: string;
+}
+
 export type BoardObject =
-  RectObject | CircleObject | LineObject | PenObject | TextObject;
+  RectObject | CircleObject | LineObject | PenObject | TextObject | ImageObject;

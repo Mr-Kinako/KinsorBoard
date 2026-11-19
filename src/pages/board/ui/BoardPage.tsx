@@ -14,18 +14,21 @@ import styles from "./BoardPage.module.scss";
 
 const SHORTCUT_MAP: Record<string, CanvasTool> = {
   v: "select",
+  s: "selection-area",
   r: "rectangle",
   o: "circle",
   l: "line",
   p: "pen",
   t: "text",
+  i: "image",
   e: "eraser",
 };
 
 export const BoardPage: React.FC = () => {
   const [zoomPercent, setZoomPercent] = useState<number>(100);
   const [activeTool, setActiveTool] = useState<CanvasTool>("select");
-  const [totalChunks, setTotalChunks] = useState<ChunkPreset>(200);
+  const [activeColor, setActiveColor] = useState<string>("#a8a2d0");
+  const [totalChunks, setTotalChunks] = useState<ChunkPreset>(100);
   const [engineInstance, setEngineInstance] = useState<BoardEngine | null>(
     null,
   );
@@ -56,6 +59,10 @@ export const BoardPage: React.FC = () => {
   }, [activeTool]);
 
   useEffect(() => {
+    engineRef.current?.setStrokeColor(activeColor);
+  }, [activeColor]);
+
+  useEffect(() => {
     engineRef.current?.setConfig(totalChunks);
   }, [totalChunks]);
 
@@ -84,7 +91,15 @@ export const BoardPage: React.FC = () => {
   return (
     <div className={styles.boardContainer}>
       <Topbar />
-      <Toolbar activeTool={activeTool} onSelectTool={setActiveTool} />
+      <Toolbar
+        activeTool={activeTool}
+        activeColor={activeColor}
+        onSelectTool={setActiveTool}
+        onSelectColor={setActiveColor}
+        onPickImageFile={(file) => {
+          void engineRef.current?.addImageFromFile(file);
+        }}
+      />
 
       <canvas ref={canvasRef} className={styles.canvas} />
 

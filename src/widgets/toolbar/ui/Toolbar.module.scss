@@ -16,6 +16,10 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
 }
 
+.hiddenInput {
+  display: none;
+}
+
 .group {
   display: flex;
   flex-direction: column;
@@ -64,4 +68,52 @@
 .icon {
   font-size: 15px;
   line-height: 1;
+}
+
+.paletteAnchor {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.colorSwatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.palettePopover {
+  position: absolute;
+  left: calc(100% + 10px);
+  bottom: 0;
+  background-color: $bg-panel;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-md;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  z-index: $z-ui;
+}
+
+.swatchBtn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease;
+
+  &:hover {
+    transform: scale(1.12);
+  }
+
+  &.swatchActive {
+    border-color: #ffffff;
+  }
 }

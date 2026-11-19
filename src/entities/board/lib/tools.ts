@@ -2,16 +2,23 @@
 
 import type { BoardObject, CanvasTool, Point } from "../model/types";
 
-export type DrawableTool = Exclude<CanvasTool, "select" | "text" | "eraser">;
+export type DrawableTool = Exclude<
+  CanvasTool,
+  "select" | "selection-area" | "text" | "image" | "eraser"
+>;
 
 const DEFAULT_STROKE = "#a8a2d0";
 const DEFAULT_STROKE_WIDTH = 2;
 const DEFAULT_FONT_SIZE = 16;
 
-export function createDraftObject(tool: DrawableTool, pos: Point): BoardObject {
+export function createDraftObject(
+  tool: DrawableTool,
+  pos: Point,
+  strokeColor: string = DEFAULT_STROKE,
+): BoardObject {
   const base = {
     id: crypto.randomUUID(),
-    strokeColor: DEFAULT_STROKE,
+    strokeColor,
     strokeWidth: DEFAULT_STROKE_WIDTH,
   };
 
@@ -73,7 +80,11 @@ export function updateDraftObject(
   }
 }
 
-export function createTextObject(pos: Point, content: string): BoardObject {
+export function createTextObject(
+  pos: Point,
+  content: string,
+  strokeColor: string = DEFAULT_STROKE,
+): BoardObject {
   return {
     id: crypto.randomUUID(),
     type: "text",
@@ -81,7 +92,27 @@ export function createTextObject(pos: Point, content: string): BoardObject {
     y: pos.y,
     content: content.trim(),
     fontSize: DEFAULT_FONT_SIZE,
-    strokeColor: DEFAULT_STROKE,
+    strokeColor,
+    strokeWidth: 1,
+  };
+}
+
+export function createImageObject(
+  pos: Point,
+  src: string,
+  width: number,
+  height: number,
+  strokeColor: string = DEFAULT_STROKE,
+): BoardObject {
+  return {
+    id: crypto.randomUUID(),
+    type: "image",
+    x: pos.x,
+    y: pos.y,
+    width,
+    height,
+    src,
+    strokeColor,
     strokeWidth: 1,
   };
 }

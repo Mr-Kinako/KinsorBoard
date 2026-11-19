@@ -54,6 +54,7 @@ export function translateObject(
     case "rectangle":
     case "circle":
     case "text":
+    case "image":
       obj.x += clampedDx;
       obj.y += clampedDy;
       break;
@@ -78,6 +79,7 @@ export function getObjectBounds(
 ): BoundingBox {
   switch (obj.type) {
     case "rectangle":
+    case "image":
       return { x: obj.x, y: obj.y, width: obj.width, height: obj.height };
     case "circle":
       return {
@@ -144,6 +146,7 @@ export function hitTestObject(
 export function isObjectValid(obj: BoardObject): boolean {
   switch (obj.type) {
     case "rectangle":
+    case "image":
       return obj.width > 2 && obj.height > 2;
     case "circle":
       return obj.radiusX > 2 && obj.radiusY > 2;

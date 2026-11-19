@@ -6,10 +6,13 @@ import type {
   CanvasTool,
   ChunkPreset,
   Point,
+  SelectionArea,
 } from "../model/types";
 import { ViewportCamera } from "./camera";
 import {
   clampPointToBoard,
+  getBoardWorldBounds,
+  getObjectBounds,
   hitTestObject,
   isObjectValid,
   isPointInsideBoard,
@@ -18,9 +21,13 @@ import {
 import { BoardRenderer } from "./renderer";
 import {
   createDraftObject,
+  createImageObject,
   createTextObject,
+  type DrawableTool,
   updateDraftObject,
 } from "./tools";
+
+const MAX_IMAGE_SIDE = 420;
 
 export class BoardEngine {
   private canvas: HTMLCanvasElement;
@@ -30,10 +37,12 @@ export class BoardEngine {
   private listeners = new Set<() => void>();
 
   private activeTool: CanvasTool = "select";
+  private strokeColor = "#a8a2d0";
   private isSpacePressed = false;
   private isPanning = false;
   private isDrawing = false;
   private isDraggingObject = false;
+  private isSelectingArea = false;
 
   private lastScreenPos: Point | null = null;
   private drawStartWorld: Point = { x: 0, y: 0 };
@@ -42,6 +51,7 @@ export class BoardEngine {
   private objects: BoardObject[] = [];
   private draftObject: BoardObject | null = null;
   private selectedObjectId: string | null = null;
+  private selectionArea: SelectionArea | null = null;
 
   private config: BoardConfig = {
     chunkSize: 600,
@@ -71,6 +81,83 @@ export class BoardEngine {
     for (const listener of this.listeners) {
       listener();
     }
+  }
+
+  public setStrokeColor(color: string): void {
+    this.strokeColor = color;
+  }
+
+  public async addImageFromFile(file: File): Promise<void> {
+    if (!file.type.startsWith("image/")) return;
+
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        } else {
+          reject(new Error("Invalid file reader result"));
+        }
+      };
+      reader.onerror = () =>
+        reject(reader.error ?? new Error("File read failed"));
+      reader.readAsDataURL(file);
+    });
+
+    const dimensions = await new Promise<{ width: number; height: number }>(
+      (resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const ratio = Math.min(
+            1,
+            MAX_IMAGE_SIDE / Math.max(img.naturalWidth, img.naturalHeight),
+          );
+          resolve({
+            width: Math.max(24, Math.round(img.naturalWidth * ratio)),
+            height: Math.max(24, Math.round(img.naturalHeight * ratio)),
+          });
+        };
+        img.onerror = () => reject(new Error("Failed to decode image"));
+        img.src = dataUrl;
+      },
+    );
+
+    const centerWorld = this.camera.screenToWorld(
+      this.canvas.width / 2,
+      this.canvas.height / 2,
+      this.canvas.getBoundingClientRect(),
+    );
+    const worldBounds = getBoardWorldBounds(this.config);
+    const clampedPos = clampPointToBoard(
+      {
+        x: centerWorld.x - dimensions.width / 2,
+        y: centerWorld.y - dimensions.height / 2,
+      },
+      this.config,
+    );
+
+    const safeX = Math.max(
+      0,
+      Math.min(worldBounds.width - dimensions.width, clampedPos.x),
+    );
+    const safeY = Math.max(
+      0,
+      Math.min(worldBounds.height - dimensions.height, clampedPos.y),
+    );
+
+    const imageObj = createImageObject(
+      { x: safeX, y: safeY },
+      dataUrl,
+      dimensions.width,
+      dimensions.height,
+      this.strokeColor,
+    );
+
+    this.objects.push(imageObj);
+    this.selectedObjectId = imageObj.id;
+    this.activeTool = "select";
+    this.updateCursor();
+    this.render();
   }
 
   public zoomIn(): void {
@@ -120,7 +207,10 @@ export class BoardEngine {
   public setTool(tool: CanvasTool): void {
     this.activeTool = tool;
     this.resetInteractionState();
-    if (tool !== "select") this.selectedObjectId = null;
+    if (tool !== "select") {
+      this.selectedObjectId = null;
+      this.selectionArea = null;
+    }
     this.updateCursor();
     this.render();
   }
@@ -143,6 +233,7 @@ export class BoardEngine {
     this.isPanning = false;
     this.isDrawing = false;
     this.isDraggingObject = false;
+    this.isSelectingArea = false;
     this.lastScreenPos = null;
     this.draftObject = null;
     this.updateCursor();
@@ -287,6 +378,23 @@ export class BoardEngine {
       return;
     }
 
+    if (this.activeTool === "selection-area") {
+      if (!isPointInsideBoard(worldPos, this.config)) return;
+      this.canvas.setPointerCapture(e.pointerId);
+      this.isSelectingArea = true;
+      this.drawStartWorld = worldPos;
+      this.selectionArea = {
+        x: worldPos.x,
+        y: worldPos.y,
+        width: 0,
+        height: 0,
+      };
+      this.render();
+      return;
+    }
+
+    if (this.activeTool === "image") return;
+
     if (this.activeTool === "text") {
       if (!isPointInsideBoard(worldPos, this.config)) return;
       const content = window.prompt("Enter text:");
@@ -309,13 +417,22 @@ export class BoardEngine {
     this.canvas.setPointerCapture(e.pointerId);
     this.isDrawing = true;
     this.drawStartWorld = worldPos;
-    this.draftObject = createDraftObject(this.activeTool, worldPos);
+    this.draftObject = createDraftObject(
+      this.activeTool as DrawableTool,
+      worldPos,
+      this.strokeColor,
+    );
     this.render();
   };
 
   private onPointerMove = (e: PointerEvent): void => {
     if (e.buttons === 0) {
-      if (this.isPanning || this.isDrawing || this.isDraggingObject) {
+      if (
+        this.isPanning ||
+        this.isDrawing ||
+        this.isDraggingObject ||
+        this.isSelectingArea
+      ) {
         this.resetInteractionState();
         this.render();
       }
@@ -352,6 +469,18 @@ export class BoardEngine {
       return;
     }
 
+    if (this.isSelectingArea) {
+      const bounded = clampPointToBoard(currentWorld, this.config);
+      this.selectionArea = {
+        x: Math.min(this.drawStartWorld.x, bounded.x),
+        y: Math.min(this.drawStartWorld.y, bounded.y),
+        width: Math.abs(bounded.x - this.drawStartWorld.x),
+        height: Math.abs(bounded.y - this.drawStartWorld.y),
+      };
+      this.render();
+      return;
+    }
+
     if (!this.isDrawing) return;
 
     if (this.activeTool === "eraser") {
@@ -385,6 +514,17 @@ export class BoardEngine {
       return;
     }
 
+    if (this.isSelectingArea) {
+      this.isSelectingArea = false;
+      if (this.selectionArea) {
+        const hit = this.findFirstObjectInArea(this.selectionArea);
+        this.selectedObjectId = hit ? hit.id : null;
+      }
+      this.updateCursor();
+      this.render();
+      return;
+    }
+
     if (!this.isDrawing) return;
     this.isDrawing = false;
 
@@ -396,6 +536,19 @@ export class BoardEngine {
       this.render();
     }
   };
+
+  private findFirstObjectInArea(area: SelectionArea): BoardObject | null {
+    for (let i = this.objects.length - 1; i >= 0; i--) {
+      const b = getObjectBounds(this.objects[i], this.ctx);
+      const overlaps =
+        b.x + b.width >= area.x &&
+        b.x <= area.x + area.width &&
+        b.y + b.height >= area.y &&
+        b.y <= area.y + area.height;
+      if (overlaps) return this.objects[i];
+    }
+    return null;
+  }
 
   private findTopObjectAt(point: Point): BoardObject | null {
     const pad = 8 / this.camera.scale;
@@ -438,6 +591,7 @@ export class BoardEngine {
       this.objects,
       this.draftObject,
       this.selectedObjectId,
+      this.selectionArea,
     );
 
     this.notify();

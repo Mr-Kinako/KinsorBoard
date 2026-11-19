@@ -13,7 +13,10 @@ interface NavigatorProps {
   zoomPercent: number;
 }
 
-export const Navigator: React.FC<NavigatorProps> = ({ engine, zoomPercent }) => {
+export const Navigator: React.FC<NavigatorProps> = ({
+  engine,
+  zoomPercent,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const transformRef = useRef<MinimapTransform | null>(null);
   const [isDragging, setIsDragging] = useState(false);
