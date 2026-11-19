@@ -2,7 +2,7 @@
 
 import { BrowserRouter, Route, Routes, } from "react-router";
 import { AppLayout } from "./layouts/AppLayout";
-import { BoardPage } from "@/pages/board/ui/BoardPage";
+import { BoardPage } from "@/pages/board/BoardPage";
 
 export function App() {
   return (

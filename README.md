@@ -1,6 +1,16 @@
 # Kinsorboard
 
-**Version:** `0.1.0-alpha.9`  
+**Version:** `0.1.0-alpha`
+
+<details>
+  <summary>
+    Примечание о версионировании
+  </summary>
+  
+  Номер сборки (build metadata) отброшен, чтобы не менять миллион раз. В целом достаточно и текущего варианта для README.
+</details>
+<br>
+
 **Status:** Active Development (MVP Phase)
 
 Легковесный, быстрый и масштабируемый интерактивный whiteboard для заметок, схем и рисования.
