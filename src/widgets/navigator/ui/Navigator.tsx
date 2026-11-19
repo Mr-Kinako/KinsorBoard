@@ -2,6 +2,8 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FaMap } from "react-icons/fa6";
+import { FaPlus, FaMinus } from "react-icons/fa";
+import { RiResetLeftLine } from "react-icons/ri";
 import type { BoardEngine } from "@/entities/board";
 import type { MinimapTransform } from "@/entities/board";
 import styles from "./Navigator.module.scss";
@@ -108,7 +110,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ engine, zoomPercent }) => 
             title="Zoom out"
             aria-label="Zoom out"
           >
-            −
+            <FaMinus />
           </button>
           <span className={styles.zoomLabel}>{zoomPercent}%</span>
           <button
@@ -118,7 +120,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ engine, zoomPercent }) => 
             title="Zoom in"
             aria-label="Zoom in"
           >
-            +
+            <FaPlus />
           </button>
         </div>
 
@@ -129,7 +131,7 @@ export const Navigator: React.FC<NavigatorProps> = ({ engine, zoomPercent }) => 
           title="Reset view"
           aria-label="Reset view"
         >
-          ⌖
+          <RiResetLeftLine />
         </button>
       </div>
     </section>
