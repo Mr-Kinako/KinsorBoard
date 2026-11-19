@@ -1,6 +1,6 @@
 # Kinsorboard
 
-**Version:** `0.1.0-alpha.0`  
+**Version:** `0.1.0-alpha.9`  
 **Status:** Active Development (MVP Phase)
 
 Легковесный, быстрый и масштабируемый интерактивный whiteboard для заметок, схем и рисования.

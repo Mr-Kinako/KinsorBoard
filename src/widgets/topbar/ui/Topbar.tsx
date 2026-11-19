@@ -1,6 +1,7 @@
 // src/widgets/topbar/ui/Topbar.tsx
 
 import React, { useState } from 'react';
+import { APP_VERSION } from "@/app/info";
 import styles from './Topbar.module.scss';
 import icon from "../../../../public/kitty-icon.png";
 
@@ -21,7 +22,7 @@ export const Topbar: React.FC = () => {
           )}
         </div>
         <span className={styles.brandName}>Kinsorboard</span>
-        <span className={styles.version}>v0.1.0-alpha.9</span>
+        <span className={styles.version}>v{APP_VERSION}</span>
       </div>
 
       <div className={styles.titleSection}>
