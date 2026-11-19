@@ -1,12 +1,33 @@
-// src/entities/board/model/tool.ts
-
-export type CanvasTool =
-  "select" | "rectangle" | "circle" | "line" | "pen" | "text" | "eraser";
+// src/entities/board/model/types.ts
 
 export interface Point {
   x: number;
   y: number;
 }
+
+export interface BoundingBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export type ChunkPreset = 100 | 200 | 400;
+
+export interface BoardConfig {
+  chunkSize: number;
+  totalChunks: ChunkPreset;
+  gridCols: number;
+}
+
+export type CanvasTool =
+  | 'select'
+  | 'rectangle'
+  | 'circle'
+  | 'line'
+  | 'pen'
+  | 'text'
+  | 'eraser';
 
 interface BaseBoardObject {
   id: string;
@@ -15,7 +36,7 @@ interface BaseBoardObject {
 }
 
 export interface RectObject extends BaseBoardObject {
-  type: "rectangle";
+  type: 'rectangle';
   x: number;
   y: number;
   width: number;
@@ -23,7 +44,7 @@ export interface RectObject extends BaseBoardObject {
 }
 
 export interface CircleObject extends BaseBoardObject {
-  type: "circle";
+  type: 'circle';
   x: number;
   y: number;
   radiusX: number;
@@ -31,14 +52,27 @@ export interface CircleObject extends BaseBoardObject {
 }
 
 export interface LineObject extends BaseBoardObject {
-  type: "line";
+  type: 'line';
   start: Point;
   end: Point;
 }
 
 export interface PenObject extends BaseBoardObject {
-  type: "pen";
+  type: 'pen';
   points: Point[];
 }
 
-export type BoardObject = RectObject | CircleObject | LineObject | PenObject;
+export interface TextObject extends BaseBoardObject {
+  type: 'text';
+  x: number;
+  y: number;
+  content: string;
+  fontSize: number;
+}
+
+export type BoardObject =
+  | RectObject
+  | CircleObject
+  | LineObject
+  | PenObject
+  | TextObject;

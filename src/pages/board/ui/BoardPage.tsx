@@ -1,10 +1,10 @@
 // src/pages/board/ui/BoardPage.tsx
 
 import React, { useEffect, useRef, useState } from "react";
-import { BoardEngine } from "@/shared/lib";
+import { BoardEngine } from "@/entities/board";
+import type { CanvasTool } from "@/entities/board";
 import { Topbar } from "@/widgets/topbar";
 import { Toolbar } from "@/widgets/toolbar";
-import type { CanvasTool } from "@/entities/board";
 import styles from "./BoardPage.module.scss";
 
 const SHORTCUT_MAP: Record<string, CanvasTool> = {

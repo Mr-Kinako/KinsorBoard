@@ -1,3 +1,4 @@
 // src/entities/board/index.ts
 
-export type { CanvasTool, Point, BoardObject } from "./model/types";
+export { BoardEngine } from "./lib/BoardEngine";
+export type { CanvasTool } from "./model/types";

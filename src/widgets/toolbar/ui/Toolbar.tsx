@@ -1,7 +1,7 @@
 // src/widgets/toolbar/ui/Toolbar.tsx
 
 import React from "react";
-import type { CanvasTool } from "@/entities/board/model/types";
+import type { CanvasTool } from "@/entities/board";
 import styles from "./Toolbar.module.scss";
 
 interface ToolbarProps {
