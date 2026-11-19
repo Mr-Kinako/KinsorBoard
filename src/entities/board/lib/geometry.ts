@@ -1,29 +1,72 @@
 // src/entities/board/lib/geometry.ts
 
-import type { BoardObject, BoundingBox, Point } from "../model/types";
+import type {
+  BoardConfig,
+  BoardObject,
+  BoundingBox,
+  Point,
+} from "../model/types";
+
+export function getBoardWorldBounds(config: BoardConfig): {
+  width: number;
+  height: number;
+} {
+  const rows = Math.ceil(config.totalChunks / config.gridCols);
+  return {
+    width: config.gridCols * config.chunkSize,
+    height: rows * config.chunkSize,
+  };
+}
+
+export function clampPointToBoard(point: Point, config: BoardConfig): Point {
+  const { width, height } = getBoardWorldBounds(config);
+  return {
+    x: Math.max(0, Math.min(width, point.x)),
+    y: Math.max(0, Math.min(height, point.y)),
+  };
+}
+
+export function isPointInsideBoard(point: Point, config: BoardConfig): boolean {
+  const { width, height } = getBoardWorldBounds(config);
+  return point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height;
+}
 
 export function translateObject(
   obj: BoardObject,
   dx: number,
   dy: number,
+  config: BoardConfig,
+  ctx: CanvasRenderingContext2D,
 ): void {
+  const bounds = getObjectBounds(obj, ctx);
+  const world = getBoardWorldBounds(config);
+
+  const clampedDx = Math.max(
+    -bounds.x,
+    Math.min(world.width - (bounds.x + bounds.width), dx),
+  );
+  const clampedDy = Math.max(
+    -bounds.y,
+    Math.min(world.height - (bounds.y + bounds.height), dy),
+  );
+
   switch (obj.type) {
     case "rectangle":
     case "circle":
     case "text":
-      obj.x += dx;
-      obj.y += dy;
+      obj.x += clampedDx;
+      obj.y += clampedDy;
       break;
     case "line":
-      obj.start.x += dx;
-      obj.start.y += dy;
-      obj.end.x += dx;
-      obj.end.y += dy;
+      obj.start.x += clampedDx;
+      obj.start.y += clampedDy;
+      obj.end.x += clampedDx;
+      obj.end.y += clampedDy;
       break;
     case "pen":
       for (const pt of obj.points) {
-        pt.x += dx;
-        pt.y += dy;
+        pt.x += clampedDx;
+        pt.y += clampedDy;
       }
       break;
   }

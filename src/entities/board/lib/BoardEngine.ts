@@ -8,7 +8,13 @@ import type {
   Point,
 } from "../model/types";
 import { ViewportCamera } from "./camera";
-import { hitTestObject, isObjectValid, translateObject } from "./geometry";
+import {
+  clampPointToBoard,
+  hitTestObject,
+  isObjectValid,
+  isPointInsideBoard,
+  translateObject,
+} from "./geometry";
 import { BoardRenderer } from "./renderer";
 import {
   createDraftObject,
@@ -51,6 +57,10 @@ export class BoardEngine {
 
     this.initListeners();
     this.resize();
+  }
+
+  public getConfig(): BoardConfig {
+    return { ...this.config };
   }
 
   public setTool(tool: CanvasTool): void {
@@ -149,7 +159,13 @@ export class BoardEngine {
 
   private onKeyDown = (e: KeyboardEvent): void => {
     const tag = (e.target as HTMLElement | null)?.tagName;
+
     if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
+      e.preventDefault();
+      return;
+    }
 
     if (e.code === "Space" && !e.repeat) {
       e.preventDefault();
@@ -188,7 +204,6 @@ export class BoardEngine {
   };
 
   private onPointerDown = (e: PointerEvent): void => {
-    // Панорамирование: только СКМ (button === 1) ИЛИ зажатый Пробел + ЛКМ (button === 0)
     const isMiddleClick = e.button === 1;
     const isSpaceDrag = e.button === 0 && this.isSpacePressed;
 
@@ -219,7 +234,9 @@ export class BoardEngine {
     }
 
     if (this.activeTool === "text") {
+      if (!isPointInsideBoard(worldPos, this.config)) return;
       const content = window.prompt("Enter text:");
+
       if (content?.trim()) {
         this.objects.push(createTextObject(worldPos, content));
         this.render();
@@ -227,14 +244,15 @@ export class BoardEngine {
       return;
     }
 
-    this.canvas.setPointerCapture(e.pointerId);
-
     if (this.activeTool === "eraser") {
       this.isDrawing = true;
       this.eraseAt(worldPos);
       return;
     }
 
+    if (!isPointInsideBoard(worldPos, this.config)) return;
+
+    this.canvas.setPointerCapture(e.pointerId);
     this.isDrawing = true;
     this.drawStartWorld = worldPos;
     this.draftObject = createDraftObject(this.activeTool, worldPos);
@@ -242,7 +260,6 @@ export class BoardEngine {
   };
 
   private onPointerMove = (e: PointerEvent): void => {
-    // Жёсткая проверка: если ни одна кнопка мыши физически не нажата — ничего не двигаем
     if (e.buttons === 0) {
       if (this.isPanning || this.isDrawing || this.isDraggingObject) {
         this.resetInteractionState();
@@ -272,6 +289,8 @@ export class BoardEngine {
           target,
           currentWorld.x - this.lastDragWorld.x,
           currentWorld.y - this.lastDragWorld.y,
+          this.config,
+          this.ctx,
         );
         this.lastDragWorld = currentWorld;
         this.render();
@@ -287,7 +306,10 @@ export class BoardEngine {
     }
 
     if (!this.draftObject) return;
-    updateDraftObject(this.draftObject, this.drawStartWorld, currentWorld);
+
+    const boundedWorld = clampPointToBoard(currentWorld, this.config);
+
+    updateDraftObject(this.draftObject, this.drawStartWorld, boundedWorld);
     this.render();
   };
 

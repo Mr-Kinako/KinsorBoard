@@ -1,4 +1,4 @@
 // src/entities/board/index.ts
 
 export { BoardEngine } from "./lib/BoardEngine";
-export type { CanvasTool } from "./model/types";
+export type { CanvasTool, ChunkPreset } from "./model/types";
