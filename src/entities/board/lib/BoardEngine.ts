@@ -229,6 +229,16 @@ export class BoardEngine {
     return this.objects.length;
   }
 
+  public clearBoard(): void {
+    if (this.objects.length === 0) return;
+    this.objects = [];
+    this.draftObject = null;
+    this.selectedObjectId = null;
+    this.selectionArea = null;
+
+    this.render();
+  }
+
   private resetInteractionState = (): void => {
     this.isPanning = false;
     this.isDrawing = false;

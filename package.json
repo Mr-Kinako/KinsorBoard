@@ -1,7 +1,7 @@
 {
   "name": "kinsorboard",
   "private": true,
-  "version": "0.1.0-alpha.26",
+  "version": "0.1.0-alpha.27",
   "type": "module",
   "scripts": {
     "watch": "vite build --watch",

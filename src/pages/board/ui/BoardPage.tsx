@@ -10,6 +10,7 @@ import { Topbar } from "@/widgets/topbar";
 import { Toolbar } from "@/widgets/toolbar";
 import { CanvasSizePanel } from "@/widgets/canvas-size";
 import { Navigator } from "@/widgets/navigator";
+import { BottomBar } from "@/widgets/bottom-bar";
 import styles from "./BoardPage.module.scss";
 
 const SHORTCUT_MAP: Record<string, CanvasTool> = {
@@ -32,6 +33,8 @@ export const BoardPage: React.FC = () => {
   const [engineInstance, setEngineInstance] = useState<BoardEngine | null>(
     null,
   );
+  const [objectsCount, setObjectsCount] = useState<number>(0);
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<BoardEngine | null>(null);
 
@@ -44,6 +47,7 @@ export const BoardPage: React.FC = () => {
 
     const unsubscribe = engine.subscribe(() => {
       setZoomPercent(engine.getScalePercent());
+      setObjectsCount(engine.getObjectsCount());
     });
 
     return () => {
@@ -177,13 +181,13 @@ export const BoardPage: React.FC = () => {
           </code>
           ;
         </div>
-
-        <span>|</span>
-
-        <span>🔍 {zoomPercent}%</span>
-        <span>|</span>
-        <span>Grid: {totalChunks} Chunks</span>
       </div>
+
+      <BottomBar
+        objectsCount={objectsCount}
+        hasUnsavedChanges={objectsCount > 0}
+        onClearBoard={() => engineRef.current?.clearBoard()}
+      />
     </div>
   );
 };
