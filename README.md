@@ -32,7 +32,7 @@
   - Зум к курсору колесом мыши (`10% – 500%`) и панорамирование (`СКМ` или `Space + ЛКМ`).
   - *Topbar:* Бренд, редактируемое название доски, заготовки под Undo/Redo, Save, Export и Settings.
   - *Right Panels (в планах):* Переключатель размера холста (`Canvas Size`: 100 / 200 / 400 чанков) и миникарта (`Navigator`).
-  - *Bottom Bar (в планах):* Статус, управление масштабом и счётчик объектов.
+  - *Bottom Bar (в планах):* Статус сохранения, сброс вида, очистка доски и счётчик объектов.
 - **Визуальный стиль:** Тёмная тема (Dark Mode) со спокойными, приглушёнными фиолетово-лавандовыми акцентами (референс лежит в `public/ref.png`).
 
 ---
@@ -40,8 +40,8 @@
 ## 🛠 Технологический стек
 
 ### Frontend (Текущий этап)
-- **Core:** React 19 + TypeScript (`strict: true`, запрет на `any`)
-- **Build Tool:** Vite (с автоматической инъекцией SCSS-переменных)
+- **Core:** React 19 + TypeScript
+- **Build Tool:** Vite
 - **Styling:** SCSS Modules + дизайн-токены в `shared/styles/_variables.scss`
 - **Routing:** `react-router` (с учётом будущей совместимости с Electron)
 - **Canvas Engine:** Декомпозированный доменный движок (`BoardEngine`, `ViewportCamera`, `BoardRenderer`, `geometry`, `tools`), изолированный от жизненного цикла React
@@ -78,4 +78,4 @@
 
 ## Ориентировочный пример UI
 
-![ref](/public/ref.png)
+![ref](./public/ref.png)
