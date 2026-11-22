@@ -77,7 +77,9 @@ export const Topbar: React.FC = () => {
             onClick={() => setIsEditing(false)}
             title="Click to rename"
           >
-            <span className={`${styles.titleText} ${styles.disabled}`}>{boardTitle}</span>
+            <span className={`${styles.titleText} ${styles.disabled}`}>
+              {boardTitle}
+            </span>
             <span className={styles.editIcon}>
               <LuPen />
             </span>
@@ -87,18 +89,10 @@ export const Topbar: React.FC = () => {
 
       <div className={styles.actions}>
         <div className={styles.group}>
-          <button
-            className={styles.iconBtn}
-            title="Undo (Ctrl+Z)"
-            disabled
-          >
+          <button className={styles.iconBtn} title="Undo (Ctrl+Z)" disabled>
             <LuUndo2 />
           </button>
-          <button
-            className={styles.iconBtn}
-            title="Redo (Ctrl+Y)"
-            disabled
-          >
+          <button className={styles.iconBtn} title="Redo (Ctrl+Y)" disabled>
             <LuRedo2 />
           </button>
         </div>
@@ -127,11 +121,7 @@ export const Topbar: React.FC = () => {
           Export
         </button>
 
-        <button
-          className={styles.iconBtn}
-          title="Settings"
-          disabled
-        >
+        <button className={styles.iconBtn} title="Settings" disabled>
           <LuSettings />
         </button>
       </div>
