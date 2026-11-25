@@ -1,6 +1,10 @@
 // src/entities/board/lib/engine/renderer.ts
 
-import type { BoardConfig, BoardObject, SelectionArea } from "../../model/types";
+import type {
+  BoardConfig,
+  BoardObject,
+  SelectionArea,
+} from "../../model/types";
 import type { ViewportCamera } from "./camera";
 import { getBoardWorldBounds, getObjectBounds } from "./geometry";
 

@@ -8,16 +8,11 @@ import type {
   Point,
   SelectionArea,
 } from "../model/types";
-import {
-  createImageObject,
-} from "./engine/tools";
+import { createImageObject } from "./engine/tools";
 
 import { EngineSubscriptions } from "./engine/subscriptions";
 import { BoardHistory } from "./engine/history";
-import {
-  clampPointToBoard,
-  getBoardWorldBounds,
-} from "./engine/geometry";
+import { clampPointToBoard, getBoardWorldBounds } from "./engine/geometry";
 import { BoardRenderer } from "./engine/renderer";
 import { BoardInputController } from "./engine/input";
 import { BoardViewport } from "./engine/viewport";
@@ -40,7 +35,6 @@ export class BoardEngine {
   private draftObject: BoardObject | null = null;
   private selectedObjectId: string | null = null;
   private selectionArea: SelectionArea | null = null;
-
 
   private config: BoardConfig = {
     chunkSize: 600,
@@ -202,7 +196,11 @@ export class BoardEngine {
   }
 
   public focusWorldPoint(worldPoint: Point): void {
-    this.viewport.camera.centerOnWorld(worldPoint, this.canvas.width, this.canvas.height);
+    this.viewport.camera.centerOnWorld(
+      worldPoint,
+      this.canvas.width,
+      this.canvas.height,
+    );
     this.render();
   }
 

@@ -296,7 +296,9 @@ export class BoardInputController {
     const selectedId = this.host.getSelectedObjectId();
 
     if (this.isDraggingObject && selectedId) {
-      const target = this.host.getObjects().find((obj) => obj.id === selectedId);
+      const target = this.host
+        .getObjects()
+        .find((obj) => obj.id === selectedId);
       if (target) {
         translateObject(
           target,

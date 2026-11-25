@@ -26,7 +26,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   canUndo,
   canRedo,
   onUndo,
-  onRedo
+  onRedo,
 }) => {
   const [boardTitle, setBoardTitle] = useState<string>("Untitled Board");
   const [isEditing, setIsEditing] = useState<boolean>(false);
