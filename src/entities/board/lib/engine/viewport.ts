@@ -1,3 +1,5 @@
+// src/entities/board/lib/engine/viewport.ts
+
 import type { BoardConfig, BoardObject, Point } from "../../model/types";
 import { ViewportCamera } from "./camera";
 import { clampPointToBoard } from "./geometry";

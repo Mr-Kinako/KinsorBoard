@@ -1,6 +1,6 @@
-// src/entities/board/lib/tools.ts
+// src/entities/board/lib/engine/tools.ts
 
-import type { BoardObject, CanvasTool, Point } from "../model/types";
+import type { BoardObject, CanvasTool, Point } from "../../model/types";
 
 export type DrawableTool = Exclude<
   CanvasTool,

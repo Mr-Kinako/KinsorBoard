@@ -1,8 +1,8 @@
-// src/entities/board/lib/renderer.ts
+// src/entities/board/lib/engine/renderer.ts
 
 import type { BoardConfig, BoardObject, SelectionArea } from "../../model/types";
 import type { ViewportCamera } from "./camera";
-import { getBoardWorldBounds, getObjectBounds } from "../geometry";
+import { getBoardWorldBounds, getObjectBounds } from "./geometry";
 
 export interface MinimapTransform {
   offsetX: number;

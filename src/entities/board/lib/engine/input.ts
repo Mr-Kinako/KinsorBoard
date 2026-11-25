@@ -1,3 +1,5 @@
+// src/entities/board/lib/engine/input.ts
+
 import type {
   BoardConfig,
   BoardObject,

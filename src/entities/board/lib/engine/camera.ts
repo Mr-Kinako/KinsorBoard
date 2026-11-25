@@ -1,6 +1,6 @@
-// src/entities/board/lib/camera.ts
+// src/entities/board/lib/engine/camera.ts
 
-import type { Point } from "../model/types";
+import type { Point } from "../../model/types";
 
 export class ViewportCamera {
   public scale = 1;

@@ -1,11 +1,11 @@
-// src/entities/board/lib/geometry.ts
+// src/entities/board/lib/engine/geometry.ts
 
 import type {
   BoardConfig,
   BoardObject,
   BoundingBox,
   Point,
-} from "../model/types";
+} from "../../model/types";
 
 export function getBoardWorldBounds(config: BoardConfig): {
   width: number;
