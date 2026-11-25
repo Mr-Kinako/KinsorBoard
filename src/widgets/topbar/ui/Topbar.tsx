@@ -1,7 +1,7 @@
 // src/widgets/topbar/ui/Topbar.tsx
 
 import React, { useState } from "react";
-import { APP_NAME, APP_VERSION } from "@/shared/info";
+import { APP_NAME, APP_VERSION } from "@/shared/config/app";
 import {
   LuSave,
   LuPen,
@@ -58,7 +58,7 @@ export const Topbar: React.FC<TopbarProps> = ({
         >
           {APP_NAME}
         </a>
-        <span className={styles.version}>v{APP_VERSION}</span>
+        <span className={styles.version}>{APP_VERSION}</span>
       </div>
 
       <div className={styles.titleSection}>
