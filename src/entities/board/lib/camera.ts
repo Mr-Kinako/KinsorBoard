@@ -47,6 +47,17 @@ export class ViewportCamera {
     this.pan = { x: 0, y: 0 };
   }
 
+  public resetZoom(viewportWidth: number, viewportHeight: number): void {
+    const oldScale = this.scale;
+    this.scale = 1;
+
+    const centerX = viewportWidth / 2;
+    const centerY = viewportHeight / 2;
+
+    this.pan.x = centerX - (centerX - this.pan.x) * (this.scale / oldScale);
+    this.pan.y = centerY - (centerY - this.pan.y) * (this.scale / oldScale);
+  }
+
   public getScalePercent(): number {
     return Math.round(this.scale * 100);
   }

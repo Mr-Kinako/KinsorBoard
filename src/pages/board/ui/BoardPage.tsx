@@ -184,9 +184,11 @@ export const BoardPage: React.FC = () => {
       </div>
 
       <BottomBar
+        zoomPercent={zoomPercent}
         objectsCount={objectsCount}
         hasUnsavedChanges={objectsCount > 0}
         onClearBoard={() => engineRef.current?.clearBoard()}
+        onResetZoom={() => engineRef.current?.resetZoom()}
       />
     </div>
   );

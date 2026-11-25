@@ -4,14 +4,18 @@ import React from "react";
 import styles from "./BottomBar.module.scss";
 
 interface BottomBarProps {
+  zoomPercent: number;
   objectsCount: number;
   hasUnsavedChanges: boolean;
+  onResetZoom: () => void;
   onClearBoard: () => void;
 }
 
 export const BottomBar: React.FC<BottomBarProps> = ({
+  zoomPercent,
   objectsCount,
   hasUnsavedChanges,
+  onResetZoom,
   onClearBoard,
 }) => {
   const saveStatusLabel = hasUnsavedChanges ? "Unsaved" : "No changes";
@@ -31,7 +35,15 @@ export const BottomBar: React.FC<BottomBarProps> = ({
       </div>
 
       <div className={styles.group}>
-        {/* TODO: Кнопка сброса зума (отдельно от панорамирования) */}
+        <button
+          type="button"
+          className={styles.actionBtn}
+          onClick={onResetZoom}
+          disabled={zoomPercent === 100}
+          title="Reset zoom to 100%"
+        >
+          {zoomPercent}%
+        </button>
 
         {/* TODO: Кнопка изменения сетки */}
 

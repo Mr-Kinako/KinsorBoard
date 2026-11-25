@@ -177,6 +177,12 @@ export class BoardEngine {
     this.render();
   }
 
+  public resetZoom(): void {
+    const rect = this.canvas.getBoundingClientRect();
+    this.camera.resetZoom(rect.width, rect.height);
+    this.render();
+  }
+
   public focusWorldPoint(worldPoint: Point): void {
     const bounded = clampPointToBoard(worldPoint, this.config);
     this.camera.centerOnWorld(bounded, this.canvas.width, this.canvas.height);
