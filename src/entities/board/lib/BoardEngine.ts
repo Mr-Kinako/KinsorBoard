@@ -16,6 +16,8 @@ import { clampPointToBoard, getBoardWorldBounds } from "./engine/geometry";
 import { BoardRenderer } from "./engine/renderer";
 import { BoardInputController } from "./engine/input";
 import { BoardViewport } from "./engine/viewport";
+import { BoardStorage } from "./engine/storage";
+import { exportCanvasAsPng } from "./engine/export";
 
 const MAX_IMAGE_SIDE = 420;
 
@@ -27,6 +29,7 @@ export class BoardEngine {
   private renderer: BoardRenderer;
   private input: BoardInputController;
   private history = new BoardHistory();
+  private storage = new BoardStorage();
 
   private activeTool: CanvasTool = "select";
   private strokeColor = "#a8a2d0";
@@ -35,6 +38,7 @@ export class BoardEngine {
   private draftObject: BoardObject | null = null;
   private selectedObjectId: string | null = null;
   private selectionArea: SelectionArea | null = null;
+  private hasUnsavedChanges = false;
 
   private config: BoardConfig = {
     chunkSize: 600,
@@ -74,12 +78,17 @@ export class BoardEngine {
       },
       recordHistory: (snapshot) => {
         this.history.record(snapshot ?? this.objects);
+        this.hasUnsavedChanges = true;
       },
       beginDragHistory: () => {
         this.history.beginDrag(this.objects);
       },
       commitDragHistory: () => {
+        const prevCount = this.history.getUndoCount();
         this.history.commitDrag(this.objects);
+        if (this.history.getUndoCount() > prevCount) {
+          this.hasUnsavedChanges = true;
+        }
       },
       cancelDragHistory: () => {
         this.history.cancelDrag();
@@ -88,6 +97,43 @@ export class BoardEngine {
     });
     this.input.init();
     this.input.resize();
+    this.loadBoard();
+  }
+
+  public getHasUnsavedChanges(): boolean {
+    return this.hasUnsavedChanges;
+  }
+
+  public saveBoard(): boolean {
+    const saved = this.storage.save(this.config, this.objects);
+    if (saved) {
+      this.hasUnsavedChanges = false;
+      this.subscriptions.notify();
+    }
+    return saved;
+  }
+
+  public loadBoard(): boolean {
+    const snapshot = this.storage.load();
+    if (!snapshot) return false;
+
+    this.config = {
+      ...this.config,
+      ...snapshot.config,
+      gridCols: Math.ceil(Math.sqrt(snapshot.config.totalChunks)),
+    };
+    this.objects = snapshot.objects;
+    this.draftObject = null;
+    this.selectedObjectId = null;
+    this.selectionArea = null;
+    this.hasUnsavedChanges = false;
+    this.render();
+
+    return true;
+  }
+
+  public exportBoard(): boolean {
+    return exportCanvasAsPng(this.canvas);
   }
 
   public subscribe(listener: () => void): () => void {
@@ -166,6 +212,7 @@ export class BoardEngine {
 
     this.history.record(this.objects);
     this.objects.push(imageObj);
+    this.hasUnsavedChanges = true;
     this.selectedObjectId = imageObj.id;
     this.activeTool = "select";
     this.input.updateCursor();
@@ -239,6 +286,7 @@ export class BoardEngine {
   public setConfig(totalChunks: ChunkPreset): void {
     this.config.totalChunks = totalChunks;
     this.config.gridCols = Math.ceil(Math.sqrt(totalChunks));
+    this.hasUnsavedChanges = true;
     this.render();
   }
 
@@ -266,6 +314,7 @@ export class BoardEngine {
     this.draftObject = null;
     this.selectedObjectId = null;
     this.selectionArea = null;
+    this.hasUnsavedChanges = true;
     this.render();
   }
 
@@ -277,6 +326,7 @@ export class BoardEngine {
     this.draftObject = null;
     this.selectedObjectId = null;
     this.selectionArea = null;
+    this.hasUnsavedChanges = true;
     this.render();
   }
 
@@ -287,6 +337,7 @@ export class BoardEngine {
     this.draftObject = null;
     this.selectedObjectId = null;
     this.selectionArea = null;
+    this.hasUnsavedChanges = true;
 
     this.render();
   }

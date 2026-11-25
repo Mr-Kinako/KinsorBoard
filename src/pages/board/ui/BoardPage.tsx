@@ -36,6 +36,7 @@ export const BoardPage: React.FC = () => {
   const [objectsCount, setObjectsCount] = useState<number>(0);
   const [canUndo, setCanUndo] = useState<boolean>(false);
   const [canRedo, setCanRedo] = useState<boolean>(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<BoardEngine | null>(null);
@@ -47,15 +48,18 @@ export const BoardPage: React.FC = () => {
     engineRef.current = engine;
     setEngineInstance(engine);
 
-    const unsubscribe = engine.subscribe(() => {
+    const syncBoardState = engine.subscribe(() => {
+      if (!engine) return;
+
       setZoomPercent(engine.getScalePercent());
       setObjectsCount(engine.getObjectsCount());
       setCanUndo(engine.canUndo());
       setCanRedo(engine.canRedo());
+      setHasUnsavedChanges(engine.getHasUnsavedChanges());
     });
 
     return () => {
-      unsubscribe();
+      syncBoardState();
       engine.destroy();
       engineRef.current = null;
       setEngineInstance(null);
@@ -114,6 +118,12 @@ export const BoardPage: React.FC = () => {
         canRedo={canRedo}
         onUndo={() => engineRef.current?.undo()}
         onRedo={() => engineRef.current?.redo()}
+        onSave={() => {
+          void engineRef.current?.saveBoard();
+        }}
+        onExport={() => {
+          void engineRef.current?.exportBoard();
+        }}
       />
       <Toolbar
         activeTool={activeTool}
@@ -206,7 +216,7 @@ export const BoardPage: React.FC = () => {
       <BottomBar
         zoomPercent={zoomPercent}
         objectsCount={objectsCount}
-        hasUnsavedChanges={objectsCount > 0}
+        hasUnsavedChanges={hasUnsavedChanges}
         onClearBoard={() => engineRef.current?.clearBoard()}
         onResetZoom={() => engineRef.current?.resetZoom()}
       />

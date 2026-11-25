@@ -18,13 +18,18 @@ export const BottomBar: React.FC<BottomBarProps> = ({
   onResetZoom,
   onClearBoard,
 }) => {
-  const saveStatusLabel = hasUnsavedChanges ? "Unsaved" : "No changes";
+  const saveStatusLabel = hasUnsavedChanges ? "Unsaved" : "Saved";
 
   return (
     <footer className={styles.bottomBar} aria-label="Board status bar">
       <div className={styles.group}>
         <span className={styles.metric} title="Save status">
-          Save: <strong>{saveStatusLabel}</strong>
+          Save:{" "}
+          <strong
+            className={styles.saveStatus ? styles.unsaved : undefined}
+          >
+            {saveStatusLabel}
+          </strong>
         </span>
 
         <span className={styles.divider} />

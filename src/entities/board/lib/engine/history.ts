@@ -20,6 +20,10 @@ export class BoardHistory {
     this.dragSnapshot = this.cloneObjects(currentObjects);
   }
 
+  public getUndoCount(): number {
+    return this.undoStack.length;
+  }
+
   public commitDrag(currentObjects: BoardObject[]): void {
     if (!this.dragSnapshot) return;
 

@@ -20,6 +20,8 @@ interface TopbarProps {
   canRedo: boolean;
   onUndo: () => void;
   onRedo: () => void;
+  onSave: () => void;
+  onExport: () => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -27,6 +29,8 @@ export const Topbar: React.FC<TopbarProps> = ({
   canRedo,
   onUndo,
   onRedo,
+  onSave,
+  onExport,
 }) => {
   const [boardTitle, setBoardTitle] = useState<string>("Untitled Board");
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -125,9 +129,11 @@ export const Topbar: React.FC<TopbarProps> = ({
         <div className={styles.divider} />
 
         <button
+          type="button"
           className={styles.actionBtn}
-          onClick={() => console.log("Save board")}
-          disabled
+          onClick={onSave}
+          title="Save board (Ctrl+S)"
+          // disabled
         >
           <span className={styles.actionIcon}>
             <LuSave />
@@ -136,9 +142,11 @@ export const Topbar: React.FC<TopbarProps> = ({
         </button>
 
         <button
+          type="button"
           className={styles.actionBtnPrimary}
-          onClick={() => console.log("Export board")}
-          disabled
+          onClick={onExport}
+          title="Export board as PNG"
+          // disabled
         >
           <span className={styles.actionIcon}>
             <LuArrowUpFromLine />
@@ -146,7 +154,12 @@ export const Topbar: React.FC<TopbarProps> = ({
           Export
         </button>
 
-        {/* <button className={styles.iconBtn} title="Settings" disabled>
+        {/* <button
+          type="button"
+          className={styles.iconBtn}
+          title="Settings"
+          disabled
+        >
           <LuSettings />
         </button> */}
       </div>
