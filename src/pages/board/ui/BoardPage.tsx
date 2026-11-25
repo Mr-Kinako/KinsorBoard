@@ -11,19 +11,9 @@ import { Toolbar } from "@/widgets/toolbar";
 import { CanvasSizePanel } from "@/widgets/canvas-size";
 import { Navigator } from "@/widgets/navigator";
 import { BottomBar } from "@/widgets/bottom-bar";
+import { ShortcutsHud } from "@/shared/ui/shortcuts-hud/ShortcutsHud";
+import { BOARD_SHORTCUT_HINTS, TOOL_SHORTCUT_MAP } from "../model/shortcuts";
 import styles from "./BoardPage.module.scss";
-
-const SHORTCUT_MAP: Record<string, CanvasTool> = {
-  v: "select",
-  s: "selection-area",
-  r: "rectangle",
-  o: "circle",
-  l: "line",
-  p: "pen",
-  t: "text",
-  i: "image",
-  e: "eraser",
-};
 
 export const BoardPage: React.FC = () => {
   const [zoomPercent, setZoomPercent] = useState<number>(100);
@@ -81,6 +71,16 @@ export const BoardPage: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
+      console.log("KEY:", {
+        key: e.key,
+        code: e.code,
+        target: (e.target as HTMLElement)?.tagName,
+        ctrl: e.ctrlKey,
+        meta: e.metaKey,
+        shift: e.shiftKey,
+        alt: e.altKey,
+        defaultPrevented: e.defaultPrevented,
+      });
 
       if (
         target &&
@@ -91,7 +91,7 @@ export const BoardPage: React.FC = () => {
 
       if (e.altKey) return;
 
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+      if ((e.ctrlKey || e.metaKey) && e.code.toLowerCase() === "keyz") {
         e.preventDefault();
 
         if (e.shiftKey) {
@@ -101,7 +101,7 @@ export const BoardPage: React.FC = () => {
         }
       }
 
-      const tool = SHORTCUT_MAP[e.key.toLowerCase()];
+      const tool = TOOL_SHORTCUT_MAP[e.code.toLowerCase()];
       if (tool) {
         setActiveTool(tool);
       }
@@ -144,74 +144,7 @@ export const BoardPage: React.FC = () => {
 
       <Navigator engine={engineInstance} zoomPercent={zoomPercent} />
 
-      <div className={styles.hud}>
-        <div>
-          <b>v: </b>{" "}
-          <code
-            style={{
-              background: "rgb(163, 225, 248, 0.1)",
-              fontFamily: "monospace",
-            }}
-          >
-            Select
-          </code>
-          ; <b>r: </b>{" "}
-          <code
-            style={{
-              background: "rgb(163, 225, 248, 0.1)",
-              fontFamily: "monospace",
-            }}
-          >
-            Rectangle
-          </code>
-          ; <b>p: </b>{" "}
-          <code
-            style={{
-              background: "rgb(163, 225, 248, 0.1)",
-              fontFamily: "monospace",
-            }}
-          >
-            Pen
-          </code>
-          ; <b>t: </b>{" "}
-          <code
-            style={{
-              background: "rgb(163, 225, 248, 0.1)",
-              fontFamily: "monospace",
-            }}
-          >
-            Text
-          </code>
-          ; <b>e: </b>{" "}
-          <code
-            style={{
-              background: "rgb(163, 225, 248, 0.1)",
-              fontFamily: "monospace",
-            }}
-          >
-            Erase
-          </code>
-          ; <b>MouseWheel: </b>{" "}
-          <code
-            style={{
-              background: "rgb(163, 225, 248, 0.1)",
-              fontFamily: "monospace",
-            }}
-          >
-            Zoom
-          </code>
-          ; <b>LBM+Space: </b>{" "}
-          <code
-            style={{
-              background: "rgb(163, 225, 248, 0.1)",
-              fontFamily: "monospace",
-            }}
-          >
-            Moving canvas
-          </code>
-          ;
-        </div>
-      </div>
+      <ShortcutsHud items={BOARD_SHORTCUT_HINTS} />
 
       <BottomBar
         zoomPercent={zoomPercent}

@@ -1,0 +1,54 @@
+// src/shared/ui/shortcuts-hud/ShortcutsHud.module.scss
+
+.hud {
+  display: none;
+
+  @media (min-width: 768px) {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    z-index: 10;
+    max-width: calc(100% - 340px);
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    padding: 4px 10px;
+    background-color: $bg-panel;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-sm;
+    color: $text-secondary;
+    font-size: 12px;
+    line-height: 1.2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.key {
+  font-weight: 700;
+  color: inherit;
+}
+
+.action {
+  padding: 1px 5px;
+  border-radius: 3px;
+  background-color: rgba(163, 225, 248, 0.1);
+  font-family: monospace;
+  font-size: 11px;
+  color: inherit;
+}
+
+.separator {
+  color: $text-secondary;
+  opacity: 0.6;
+}

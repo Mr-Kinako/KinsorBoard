@@ -16,21 +16,3 @@
   height: 100%;
   touch-action: none;
 }
-
-.hud {
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 10px;
-  background-color: $bg-panel;
-  border: 1px solid $border-subtle;
-  border-radius: $radius-sm;
-  color: $text-secondary;
-  font-size: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
-}
