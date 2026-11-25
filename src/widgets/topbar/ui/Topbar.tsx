@@ -120,7 +120,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             className={styles.iconBtn}
             disabled={!canRedo}
             onClick={onRedo}
-            title="Redo (Ctrl+Y)"
+            title="Redo (Ctrl+Shift+S)"
           >
             <LuRedo2 />
           </button>
