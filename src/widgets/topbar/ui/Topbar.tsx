@@ -8,14 +8,26 @@ import {
   LuUndo2,
   LuRedo2,
   LuArrowUpFromLine,
-  LuSettings,
+  // LuSettings,
 } from "react-icons/lu";
 import styles from "./Topbar.module.scss";
 import icon from "../../../../public/kitty-icon.png";
 
 const DEFAULT_TITLE: string = "Untitled Board";
 
-export const Topbar: React.FC = () => {
+interface TopbarProps {
+  canUndo: boolean;
+  canRedo: boolean;
+  onUndo: () => void;
+  onRedo: () => void;
+}
+
+export const Topbar: React.FC<TopbarProps> = ({
+  canUndo,
+  canRedo,
+  onUndo,
+  onRedo
+}) => {
   const [boardTitle, setBoardTitle] = useState<string>("Untitled Board");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -89,10 +101,23 @@ export const Topbar: React.FC = () => {
 
       <div className={styles.actions}>
         <div className={styles.group}>
-          <button className={styles.iconBtn} title="Undo (Ctrl+Z)" disabled>
+          <button
+            type="button"
+            className={styles.iconBtn}
+            disabled={!canUndo}
+            onClick={onUndo}
+            title="Undo (Ctrl+Z)"
+          >
             <LuUndo2 />
           </button>
-          <button className={styles.iconBtn} title="Redo (Ctrl+Y)" disabled>
+
+          <button
+            type="button"
+            className={styles.iconBtn}
+            disabled={!canRedo}
+            onClick={onRedo}
+            title="Redo (Ctrl+Y)"
+          >
             <LuRedo2 />
           </button>
         </div>
@@ -121,9 +146,9 @@ export const Topbar: React.FC = () => {
           Export
         </button>
 
-        <button className={styles.iconBtn} title="Settings" disabled>
+        {/* <button className={styles.iconBtn} title="Settings" disabled>
           <LuSettings />
-        </button>
+        </button> */}
       </div>
     </header>
   );

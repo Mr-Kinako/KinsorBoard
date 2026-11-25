@@ -34,6 +34,8 @@ export const BoardPage: React.FC = () => {
     null,
   );
   const [objectsCount, setObjectsCount] = useState<number>(0);
+  const [canUndo, setCanUndo] = useState<boolean>(false);
+  const [canRedo, setCanRedo] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<BoardEngine | null>(null);
@@ -48,6 +50,8 @@ export const BoardPage: React.FC = () => {
     const unsubscribe = engine.subscribe(() => {
       setZoomPercent(engine.getScalePercent());
       setObjectsCount(engine.getObjectsCount());
+      setCanUndo(engine.canUndo());
+      setCanRedo(engine.canRedo());
     });
 
     return () => {
@@ -80,7 +84,18 @@ export const BoardPage: React.FC = () => {
       ) {
         return;
       }
-      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      if (e.altKey) return;
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+
+        if (e.shiftKey) {
+          engineRef.current?.redo();
+        } else {
+          engineRef.current?.undo();
+        }
+      }
 
       const tool = SHORTCUT_MAP[e.key.toLowerCase()];
       if (tool) {
@@ -94,7 +109,12 @@ export const BoardPage: React.FC = () => {
 
   return (
     <div className={styles.boardContainer}>
-      <Topbar />
+      <Topbar
+        canUndo={canUndo}
+        canRedo={canRedo}
+        onUndo={() => engineRef.current?.undo()}
+        onRedo={() => engineRef.current?.redo()}
+      />
       <Toolbar
         activeTool={activeTool}
         activeColor={activeColor}

@@ -53,6 +53,10 @@ export class BoardEngine {
   private selectedObjectId: string | null = null;
   private selectionArea: SelectionArea | null = null;
 
+  private undoStack: BoardObject[][] = [];
+  private redoStack: BoardObject[][] = [];
+  private dragSnapshot: BoardObject[] | null = null;
+
   private config: BoardConfig = {
     chunkSize: 600,
     totalChunks: 200,
@@ -156,6 +160,7 @@ export class BoardEngine {
     this.objects.push(imageObj);
     this.selectedObjectId = imageObj.id;
     this.activeTool = "select";
+    this.recordHistory();
     this.updateCursor();
     this.render();
   }
@@ -235,8 +240,50 @@ export class BoardEngine {
     return this.objects.length;
   }
 
+  private cloneObjects(source: BoardObject[]): BoardObject[] {
+    return source.map((obj) => structuredClone(obj));
+  }
+
+  private recordHistory(): void {
+    this.undoStack.push(this.cloneObjects(this.objects));
+    this.redoStack = [];
+  }
+
+  public canUndo(): boolean {
+    return this.undoStack.length > 0;
+  }
+
+  public canRedo(): boolean {
+    return this.redoStack.length > 0;
+  }
+
+  public undo(): void {
+    const previous = this.undoStack.pop();
+    if (!previous) return;
+
+    this.redoStack.push(this.cloneObjects(this.objects));
+    this.objects = previous;
+    this.draftObject = null;
+    this.selectedObjectId = null;
+    this.selectionArea = null;
+    this.render();
+  }
+
+  public redo(): void {
+    const next = this.redoStack.pop();
+    if (!next) return;
+
+    this.undoStack.push(this.cloneObjects(this.objects));
+    this.objects = next;
+    this.draftObject = null;
+    this.selectedObjectId = null;
+    this.selectionArea = null;
+    this.render();
+  }
+
   public clearBoard(): void {
     if (this.objects.length === 0) return;
+    this.recordHistory();
     this.objects = [];
     this.draftObject = null;
     this.selectedObjectId = null;
@@ -339,6 +386,7 @@ export class BoardEngine {
       (e.key === "Delete" || e.key === "Backspace") &&
       this.selectedObjectId
     ) {
+      this.recordHistory();
       this.objects = this.objects.filter(
         (obj) => obj.id !== this.selectedObjectId,
       );
@@ -386,6 +434,7 @@ export class BoardEngine {
       this.selectedObjectId = hit ? hit.id : null;
       if (hit) {
         this.canvas.setPointerCapture(e.pointerId);
+        this.dragSnapshot = this.cloneObjects(this.objects);
         this.isDraggingObject = true;
         this.lastDragWorld = worldPos;
         this.updateCursor();
@@ -546,6 +595,7 @@ export class BoardEngine {
 
     if (this.draftObject) {
       if (isObjectValid(this.draftObject)) {
+        this.recordHistory();
         this.objects.push(this.draftObject);
       }
       this.draftObject = null;
@@ -579,12 +629,17 @@ export class BoardEngine {
   private eraseAt(point: Point): void {
     const threshold = 10 / this.camera.scale;
     const prevLength = this.objects.length;
+
     this.objects = this.objects.filter((obj) => {
       const hit = hitTestObject(obj, point, threshold, this.ctx);
       if (hit && obj.id === this.selectedObjectId) this.selectedObjectId = null;
       return !hit;
     });
-    if (this.objects.length !== prevLength) this.render();
+
+    if (this.objects.length !== prevLength){
+      this.recordHistory();
+      this.render();
+    }
   }
 
   private onWheel = (e: WheelEvent): void => {
