@@ -11,8 +11,11 @@ import { Toolbar } from "@/widgets/toolbar";
 import { CanvasSizePanel } from "@/widgets/canvas-size";
 import { Navigator } from "@/widgets/navigator";
 import { BottomBar } from "@/widgets/bottom-bar";
-import { ShortcutsHud } from "@/shared/ui/shortcuts-hud/ShortcutsHud";
-import { BOARD_SHORTCUT_HINTS, TOOL_SHORTCUT_MAP } from "../model/shortcuts";
+// import { ShortcutsHud } from "@/shared/ui/shortcuts-hud/ShortcutsHud";
+import {
+  // BOARD_SHORTCUT_HINTS,
+  TOOL_SHORTCUT_MAP
+} from "../model/shortcuts";
 import styles from "./BoardPage.module.scss";
 
 export const BoardPage: React.FC = () => {
@@ -144,7 +147,7 @@ export const BoardPage: React.FC = () => {
 
       <Navigator engine={engineInstance} zoomPercent={zoomPercent} />
 
-      <ShortcutsHud items={BOARD_SHORTCUT_HINTS} />
+      {/* <ShortcutsHud items={BOARD_SHORTCUT_HINTS} /> */}
 
       <BottomBar
         zoomPercent={zoomPercent}
